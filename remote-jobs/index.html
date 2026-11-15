@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Việc Remote Cho Tôi</title>
+<meta name="description" content="Tổng hợp việc remote SEO, AI training, dịch thuật, trợ lý ảo — tự cập nhật mỗi ngày." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%92%BC%3C/text%3E%3C/svg%3E" />
+<style>
+:root{
+  --bg:#f6f7f9;--surface:#fff;--surface-2:#f0f2f5;--text:#15181d;--muted:#5d6673;--border:#e1e5ea;
+  --accent:#2457d6;--accent-soft:#e7eefc;--ok:#167a4a;--ok-soft:#e3f4ea;--warn:#9a5b00;--warn-soft:#fdf1dc;
+  --c-seo:#2457d6;--c-ai:#7a3fd1;--c-translation:#0b7f86;--c-va:#b4461b;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1216;--surface:#171b21;--surface-2:#1f242c;--text:#e8ebef;--muted:#9aa3ae;--border:#2a3039;
+  --accent:#7ea4ff;--accent-soft:#1d2a47;--ok:#5fd19a;--ok-soft:#173327;--warn:#f0b45a;--warn-soft:#3a2c14;
+  --c-seo:#7ea4ff;--c-ai:#b893ff;--c-translation:#5fd0d6;--c-va:#ff9a70;color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0f1216;--surface:#171b21;--surface-2:#1f242c;--text:#e8ebef;--muted:#9aa3ae;--border:#2a3039;
+  --accent:#7ea4ff;--accent-soft:#1d2a47;--ok:#5fd19a;--ok-soft:#173327;--warn:#f0b45a;--warn-soft:#3a2c14;
+  --c-seo:#7ea4ff;--c-ai:#b893ff;--c-translation:#5fd0d6;--c-va:#ff9a70;color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+a{color:var(--accent)}
+.wrap{max-width:960px;margin:0 auto;padding:0 16px}
+header{padding:28px 0 8px}
+h1{font-size:26px;margin:0 0 4px;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:0}
+.tabs{display:flex;gap:4px;margin:20px 0 16px;border-bottom:1px solid var(--border);overflow-x:auto}
+.tab{background:none;border:0;padding:10px 14px;font:inherit;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
+.tab[aria-selected="true"]{color:var(--text);border-color:var(--accent);font-weight:600}
+.tab .n{font-size:12px;background:var(--surface-2);border-radius:10px;padding:1px 7px;margin-left:4px}
+.panel[hidden]{display:none}
+.filters{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;display:grid;gap:12px;margin-bottom:14px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:999px;padding:5px 12px;font:inherit;font-size:14px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+:root[data-theme="dark"] .chip[aria-pressed="true"]{color:#0f1216}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .chip[aria-pressed="true"]{color:#0f1216}}
+.row{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+input[type=search],select{font:inherit;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text)}
+input[type=search]{flex:1;min-width:200px}
+label.tg{display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer}
+.meta-bar{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;color:var(--muted);font-size:13px;margin:0 2px 10px}
+.list{display:grid;gap:10px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+.card.applied{opacity:.6}
+.card h3{font-size:16px;margin:0 0 2px;line-height:1.35}
+.card .co{color:var(--muted);font-size:14px}
+.badges{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}
+.b{font-size:12px;padding:2px 8px;border-radius:6px;background:var(--surface-2);color:var(--muted)}
+.b.cat{color:#fff}
+.b.cat.seo{background:var(--c-seo)}.b.cat.ai{background:var(--c-ai)}.b.cat.translation{background:var(--c-translation)}.b.cat.va{background:var(--c-va)}
+:root[data-theme="dark"] .b.cat{color:#0f1216}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .b.cat{color:#0f1216}}
+.b.ok{background:var(--ok-soft);color:var(--ok)}.b.warn{background:var(--warn-soft);color:var(--warn)}
+.ex{color:var(--muted);font-size:14px;margin:4px 0 10px}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+.btn{font:inherit;font-size:14px;padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;text-decoration:none}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+:root[data-theme="dark"] .btn.primary{color:#0f1216}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .btn.primary{color:#0f1216}}
+.btn[aria-pressed="true"]{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.empty{text-align:center;color:var(--muted);padding:40px 16px;background:var(--surface);border:1px dashed var(--border);border-radius:12px}
+.more{display:block;margin:14px auto 0}
+.note{background:var(--warn-soft);color:var(--text);border-radius:12px;padding:12px 14px;font-size:14px;margin-bottom:14px}
+.note b{color:var(--warn)}
+h2{font-size:18px;margin:26px 0 4px}
+.h2sub{color:var(--muted);font-size:14px;margin:0 0 10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px}
+.pf h3{font-size:15px}
+.pf .pay{font-size:13px;color:var(--ok);font-weight:600}
+.pf p{font-size:14px;color:var(--muted);margin:6px 0 10px}
+.tips{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:6px 18px}
+.tips li{margin:8px 0}
+footer{color:var(--muted);font-size:13px;padding:30px 0 40px}
+.src{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Việc Remote Cho Tôi</h1>
+  <p class="sub">SEO · AI training · Dịch thuật (MTPE) · Trợ lý ảo/Marketing. Tự cập nhật 2 lần mỗi ngày.</p>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button class="tab" role="tab" data-tab="jobs" aria-selected="true">Việc mới <span class="n" id="n-jobs">0</span></button>
+  <button class="tab" role="tab" data-tab="platforms" aria-selected="false">Nền tảng nên đăng ký</button>
+  <button class="tab" role="tab" data-tab="saved" aria-selected="false">Đã lưu / Đã apply <span class="n" id="n-saved">0</span></button>
+  <button class="tab" role="tab" data-tab="guide" aria-selected="false">Mẹo & cảnh báo lừa đảo</button>
+</nav>
+
+<!-- ===== Việc mới ===== -->
+<section class="panel" id="p-jobs">
+  <div class="filters">
+    <div class="chips" id="cat-chips"></div>
+    <div class="row">
+      <input type="search" id="q" placeholder="Tìm theo tên việc, công ty, kỹ năng…" />
+      <select id="age">
+        <option value="3">3 ngày qua</option>
+        <option value="7" selected>7 ngày qua</option>
+        <option value="14">14 ngày qua</option>
+        <option value="30">30 ngày qua</option>
+      </select>
+    </div>
+    <div class="row">
+      <label class="tg"><input type="checkbox" id="f-geo" checked /> Chỉ việc nhận người ở Việt Nam / toàn cầu</label>
+      <label class="tg"><input type="checkbox" id="f-flex" /> Chỉ freelance / part-time / hợp đồng</label>
+      <label class="tg"><input type="checkbox" id="f-hide" checked /> Ẩn việc đã apply</label>
+    </div>
+  </div>
+  <div class="meta-bar"><span id="count"></span><span id="updated"></span></div>
+  <div class="list" id="list"></div>
+  <button class="btn more" id="more" hidden>Xem thêm</button>
+</section>
+
+<!-- ===== Nền tảng ===== -->
+<section class="panel" id="p-platforms" hidden>
+  <div class="note"><b>Vì sao có tab này?</b> Nhiều nơi trả tốt nhất cho người làm SEO + AI (đặc biệt là AI training) không đăng tin lên job board. Bạn phải <b>đăng ký hồ sơ và làm bài test</b> trực tiếp trên nền tảng. Nên đăng ký 3–5 nơi cùng lúc vì tỉ lệ được duyệt mỗi nơi không cao.</div>
+  <div id="platforms"></div>
+</section>
+
+<!-- ===== Đã lưu ===== -->
+<section class="panel" id="p-saved" hidden>
+  <div class="meta-bar"><span>Lưu trên trình duyệt này. Xoá dữ liệu trình duyệt thì danh sách cũng mất.</span></div>
+  <div class="list" id="saved-list"></div>
+</section>
+
+<!-- ===== Mẹo ===== -->
+<section class="panel" id="p-guide" hidden>
+  <h2>Dịch bằng AI có được không?</h2>
+  <ul class="tips">
+    <li><b>Được, nếu việc ghi rõ "MTPE", "post-editing" hoặc "AI-assisted".</b> Khi đó việc của bạn là sửa bản máy dịch cho đúng nghĩa, đúng giọng, đúng thuật ngữ.</li>
+    <li><b>Không nên</b> nộp bản AI thô cho việc yêu cầu "human translation" hoặc "no AI". Nhiều khách kiểm tra và có thể không trả tiền hoặc báo cáo tài khoản.</li>
+    <li>Quy trình nên dùng: AI dịch nháp → bạn đọc đối chiếu từng câu → sửa thuật ngữ và văn phong → đọc lại bản cuối như người bản xứ.</li>
+    <li>Cặp ngôn ngữ dễ có việc nhất với bạn: <b>Anh → Việt</b>. Bạn chỉ cần đọc hiểu tiếng Anh tốt và viết tiếng Việt hay, không cần nói tiếng Anh.</li>
+  </ul>
+  <h2>Hợp với "đọc viết tốt, nói còn yếu"</h2>
+  <ul class="tips">
+    <li>Ưu tiên việc <b>async</b> (làm không cần họp): AI training, viết content, dịch, SEO audit. Tìm chữ "async", "no calls", "flexible hours" trong tin.</li>
+    <li>Upwork / Fiverr: giao tiếp chủ yếu bằng tin nhắn. Dùng AI để soát lại tiếng Anh trước khi gửi.</li>
+    <li>Ghi rõ trong hồ sơ: <i>"SEO specialist using AI tools (ChatGPT/Claude) for research, content and translation, native Vietnamese."</i></li>
+  </ul>
+  <h2>Cảnh báo lừa đảo</h2>
+  <ul class="tips">
+    <li>❌ Bắt <b>đóng phí</b> (phí đào tạo, phí tài liệu, phí kích hoạt) trước khi làm. Việc thật không thu tiền ứng viên.</li>
+    <li>❌ "Làm nhiệm vụ like/đánh giá sản phẩm, nạp tiền để nhận hoa hồng": lừa đảo phổ biến nhất tại Việt Nam.</li>
+    <li>❌ Tuyển qua Telegram/Zalo, không có website công ty, lương cao bất thường cho việc rất đơn giản.</li>
+    <li>❌ Gửi séc hoặc chuyển khoản trước rồi nhờ bạn chuyển lại một phần.</li>
+    <li>✅ Trên Upwork/Fiverr: luôn nhận việc và nhận tiền <b>trong nền tảng</b>, không chuyển ra ngoài.</li>
+  </ul>
+</section>
+
+<footer>
+  Nguồn tin tự động: <span class="src" id="src-list"></span>
+  <p>Tin lấy từ API/RSS công khai của các trang trên, bao gồm dữ liệu từ <a href="https://remoteok.com" target="_blank" rel="noopener">Remote OK</a>. Luôn đọc kỹ tin gốc trước khi apply.</p>
+</footer>
+</div>
+
+<script>
+const CATS = {
+  seo: 'SEO / Content',
+  ai: 'AI training',
+  translation: 'Dịch thuật',
+  va: 'Trợ lý ảo / Marketing',
+};
+
+const PLATFORMS = [
+  { group: 'AI training / Đánh giá AI', sub: 'Hợp nhất với bạn: biết AI, viết tiếng Anh được, làm theo task. Thường có nhu cầu người viết/đánh giá tiếng Việt.', items: [
+    { name: 'Outlier', url: 'https://outlier.ai', pay: '~$15–40/giờ', desc: 'Viết và chấm câu trả lời cho AI. Hay tuyển "Vietnamese writer". Làm bài test khi đăng ký.' },
+    { name: 'DataAnnotation', url: 'https://www.dataannotation.tech', pay: '~$20+/giờ', desc: 'Đánh giá chất lượng câu trả lời của chatbot. Bài test đầu vào khá khó, đỗ thì việc đều.' },
+    { name: 'Mindrift (Toloka)', url: 'https://mindrift.ai', pay: 'Theo dự án', desc: 'Dự án AI tutor theo chuyên môn và ngôn ngữ. Có dự án cho người bản ngữ.' },
+    { name: 'Alignerr', url: 'https://www.alignerr.com', pay: 'Theo giờ', desc: 'Huấn luyện AI theo lĩnh vực, có cả viết và ngôn ngữ.' },
+    { name: 'TELUS Digital AI', url: 'https://www.telusdigital.com/careers', pay: 'Theo giờ', desc: 'Việc "search quality rater", "ads evaluator". Rất hợp với dân SEO.' },
+    { name: 'OneForma', url: 'https://www.oneforma.com', pay: 'Theo task', desc: 'Dự án dữ liệu, dịch và chấm điểm cho tiếng Việt.' },
+    { name: 'Prolific', url: 'https://www.prolific.com', pay: 'Theo khảo sát', desc: 'Khảo sát và task AI ngắn. Hợp để kiếm thêm lúc rảnh.' },
+  ]},
+  { group: 'Dịch thuật / MTPE', sub: 'Tìm dự án ghi "post-editing" hoặc "MTPE" nếu muốn dùng AI hợp lệ.', items: [
+    { name: 'ProZ.com', url: 'https://www.proz.com/translation-jobs', pay: 'Theo từ', desc: 'Chợ việc dịch lớn nhất thế giới. Lọc theo cặp ngôn ngữ English > Vietnamese.' },
+    { name: 'Smartcat', url: 'https://www.smartcat.com', pay: 'Theo từ', desc: 'Nền tảng dịch có sẵn máy dịch và AI. Agency tìm dịch giả trong marketplace.' },
+    { name: 'TranslatorsCafé', url: 'https://www.translatorscafe.com/cafe/jobs.asp', pay: 'Theo từ', desc: 'Bảng việc dịch miễn phí.' },
+    { name: 'RWS TrainAI', url: 'https://www.rws.com/artificial-intelligence/train-ai-data-services/', pay: 'Theo giờ', desc: 'Dữ liệu ngôn ngữ cho AI, thường cần người bản ngữ.' },
+    { name: 'Welocalize', url: 'https://www.welocalize.com/careers/', pay: 'Theo dự án', desc: 'Localization và dự án đánh giá ngôn ngữ.' },
+  ]},
+  { group: 'Freelance SEO / Content / Trợ lý ảo', sub: 'Tạo hồ sơ một lần, sau đó tự gửi proposal hoặc để khách tìm đến.', items: [
+    { name: 'Upwork', url: 'https://www.upwork.com/nx/search/jobs/?q=seo%20vietnamese', pay: 'Tự đặt giá', desc: 'Lớn nhất. Đầu tiên nhận job nhỏ để có review. Tìm "SEO", "Vietnamese".' },
+    { name: 'Fiverr', url: 'https://www.fiverr.com', pay: 'Tự đặt giá', desc: 'Đăng gói dịch vụ: "SEO audit", "Vietnamese SEO article", "English → Vietnamese translation".' },
+    { name: 'Freelancer.com', url: 'https://www.freelancer.com/jobs/seo/', pay: 'Đấu giá', desc: 'Nhiều dự án SEO nhỏ. Cạnh tranh giá cao.' },
+    { name: 'Contra', url: 'https://contra.com', pay: 'Không mất phí', desc: 'Freelance không thu hoa hồng. Hợp làm portfolio.' },
+    { name: 'ProBlogger Jobs', url: 'https://problogger.com/jobs/', pay: 'Theo bài', desc: 'Việc viết blog và content tiếng Anh.' },
+    { name: 'OnlineJobs.ph', url: 'https://www.onlinejobs.ph/jobseekers/jobsearch', pay: 'Theo tháng', desc: 'Việc trợ lý ảo/SEO cho khách Mỹ, Úc. Chủ yếu tuyển người Philippines nhưng một số tin nhận cả Đông Nam Á.' },
+  ]},
+  { group: 'Trong nước', sub: 'Không có RSS công khai nên không tự lấy được. Bấm vào là ra sẵn kết quả tìm kiếm.', items: [
+    { name: 'TopCV: SEO remote', url: 'https://www.topcv.vn/tim-viec-lam-seo-remote', pay: 'VNĐ', desc: 'Lọc thêm "Bán thời gian" hoặc "Freelance".' },
+    { name: 'VietnamWorks', url: 'https://www.vietnamworks.com/viec-lam?q=seo%20remote', pay: 'VNĐ', desc: 'Nhiều việc ở agency và công ty nước ngoài.' },
+    { name: 'vLance / freelancerviet.vn', url: 'https://www.freelancerviet.vn', pay: 'VNĐ', desc: 'Chợ freelance Việt Nam: viết bài SEO, dịch, trợ lý.' },
+    { name: 'LinkedIn Jobs', url: 'https://www.linkedin.com/jobs/search/?keywords=SEO&location=Vietnam&f_WT=2', pay: 'Đa dạng', desc: 'Đã lọc sẵn "Remote" tại Việt Nam. Bật Job Alert để nhận email.' },
+  ]},
+];
+
+// ---------- lưu trên trình duyệt ----------
+const store = {
+  get(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+};
+let saved = store.get('rj-saved', {});   // id -> job
+let applied = store.get('rj-applied', {}); // id -> ISO date
+const prefs = store.get('rj-prefs', {});
+
+let ALL = [];
+let shown = 40;
+const state = { cats: new Set(prefs.cats || []), q: '', age: prefs.age || 7, geo: prefs.geo ?? true, flex: prefs.flex ?? false, hide: prefs.hide ?? true };
+
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const ago = (iso) => {
+  if (!iso) return '';
+  const d = (Date.now() - Date.parse(iso)) / 36e5;
+  if (d < 1) return 'vừa đăng';
+  if (d < 24) return `${Math.floor(d)} giờ trước`;
+  return `${Math.floor(d / 24)} ngày trước`;
+};
+
+function card(j) {
+  const isSaved = !!saved[j.id], isApplied = !!applied[j.id];
+  return `<article class="card${isApplied ? ' applied' : ''}">
+    <h3>${esc(j.title)}</h3>
+    <div class="co">${esc(j.company || 'Không rõ công ty')} · ${esc(j.source)}${j.date ? ' · ' + ago(j.date) : ''}</div>
+    <div class="badges">
+      ${j.categories.map((c) => `<span class="b cat ${c}">${CATS[c]}</span>`).join('')}
+      ${j.vietnamese ? '<span class="b ok">Có nhắc tiếng Việt</span>' : ''}
+      <span class="b ${j.geoOpen ? 'ok' : 'warn'}">📍 ${esc(j.location)}</span>
+      ${j.type ? `<span class="b">${esc(j.type)}</span>` : ''}
+      ${j.salary ? `<span class="b ok">💰 ${esc(j.salary)}</span>` : ''}
+    </div>
+    ${j.excerpt ? `<p class="ex">${esc(j.excerpt)}</p>` : ''}
+    <div class="actions">
+      <a class="btn primary" href="${esc(j.url)}" target="_blank" rel="noopener">Xem & apply ↗</a>
+      <button class="btn" data-save="${esc(j.id)}" aria-pressed="${isSaved}">${isSaved ? '★ Đã lưu' : '☆ Lưu'}</button>
+      <button class="btn" data-apply="${esc(j.id)}" aria-pressed="${isApplied}">${isApplied ? '✓ Đã apply' : 'Đánh dấu đã apply'}</button>
+    </div>
+  </article>`;
+}
+
+function filtered() {
+  const q = state.q.trim().toLowerCase();
+  const cutoff = Date.now() - state.age * 864e5;
+  return ALL.filter((j) =>
+    (!state.cats.size || j.categories.some((c) => state.cats.has(c))) &&
+    (!j.date || Date.parse(j.date) >= cutoff) &&
+    (!state.geo || j.geoOpen) &&
+    (!state.flex || j.flexible) &&
+    (!state.hide || !applied[j.id]) &&
+    (!q || `${j.title} ${j.company} ${j.tags.join(' ')} ${j.excerpt}`.toLowerCase().includes(q))
+  ).sort((a, b) => (b.vietnamese - a.vietnamese) || (b.date || '').localeCompare(a.date || ''));
+}
+
+function renderJobs() {
+  const list = filtered();
+  $('#n-jobs').textContent = list.length;
+  $('#count').textContent = `${list.length} việc phù hợp`;
+  $('#list').innerHTML = list.length
+    ? list.slice(0, shown).map(card).join('')
+    : `<div class="empty">${ALL.length ? 'Không có việc khớp bộ lọc. Thử bỏ bớt bộ lọc hoặc tăng số ngày.' : 'Chưa có dữ liệu. Trang sẽ có việc sau lần chạy cập nhật đầu tiên.'}</div>`;
+  $('#more').hidden = list.length <= shown;
+  store.set('rj-prefs', { cats: [...state.cats], age: state.age, geo: state.geo, flex: state.flex, hide: state.hide });
+}
+
+function renderSaved() {
+  const ids = new Set([...Object.keys(saved), ...Object.keys(applied)]);
+  const jobs = [...ids].map((id) => saved[id] || ALL.find((j) => j.id === id)).filter(Boolean);
+  $('#n-saved').textContent = jobs.length;
+  $('#saved-list').innerHTML = jobs.length ? jobs.map(card).join('') : '<div class="empty">Chưa lưu việc nào. Bấm ☆ Lưu ở tab Việc mới.</div>';
+}
+
+function renderPlatforms() {
+  $('#platforms').innerHTML = PLATFORMS.map((g) => `
+    <h2>${esc(g.group)}</h2><p class="h2sub">${esc(g.sub)}</p>
+    <div class="grid">${g.items.map((p) => `
+      <div class="card pf"><h3>${esc(p.name)}</h3><div class="pay">${esc(p.pay)}</div><p>${esc(p.desc)}</p>
+      <a class="btn primary" href="${esc(p.url)}" target="_blank" rel="noopener">Mở trang ↗</a></div>`).join('')}
+    </div>`).join('');
+}
+
+function renderChips() {
+  const all = `<button class="chip" data-cat="" aria-pressed="${!state.cats.size}">Tất cả</button>`;
+  $('#cat-chips').innerHTML = all + Object.entries(CATS).map(([k, v]) =>
+    `<button class="chip" data-cat="${k}" aria-pressed="${state.cats.has(k)}">${v}</button>`).join('');
+}
+
+function rerender() { renderJobs(); renderSaved(); }
+
+document.addEventListener('click', (e) => {
+  const t = e.target.closest('button');
+  if (!t) return;
+  if (t.dataset.tab) {
+    document.querySelectorAll('.tab').forEach((b) => b.setAttribute('aria-selected', b === t));
+    document.querySelectorAll('.panel').forEach((p) => (p.hidden = p.id !== 'p-' + t.dataset.tab));
+    store.set('rj-tab', t.dataset.tab);
+  } else if ('cat' in t.dataset) {
+    const c = t.dataset.cat;
+    if (!c) state.cats.clear(); else state.cats.has(c) ? state.cats.delete(c) : state.cats.add(c);
+    shown = 40; renderChips(); renderJobs();
+  } else if (t.dataset.save) {
+    const id = t.dataset.save;
+    if (saved[id]) delete saved[id]; else saved[id] = ALL.find((j) => j.id === id) || saved[id] || applied[id];
+    store.set('rj-saved', saved); rerender();
+  } else if (t.dataset.apply) {
+    const id = t.dataset.apply;
+    if (applied[id]) delete applied[id];
+    else { applied[id] = new Date().toISOString(); const j = ALL.find((x) => x.id === id); if (j && !saved[id]) saved[id] = j; store.set('rj-saved', saved); }
+    store.set('rj-applied', applied); rerender();
+  } else if (t.id === 'more') { shown += 40; renderJobs(); }
+});
+
+$('#q').addEventListener('input', (e) => { state.q = e.target.value; shown = 40; renderJobs(); });
+$('#age').value = String(state.age);
+$('#age').addEventListener('change', (e) => { state.age = +e.target.value; renderJobs(); });
+for (const [id, k] of [['#f-geo', 'geo'], ['#f-flex', 'flex'], ['#f-hide', 'hide']]) {
+  $(id).checked = state[k];
+  $(id).addEventListener('change', (e) => { state[k] = e.target.checked; shown = 40; renderJobs(); });
+}
+
+const lastTab = store.get('rj-tab', 'jobs');
+document.querySelector(`.tab[data-tab="${lastTab}"]`)?.click();
+renderChips(); renderPlatforms();
+
+fetch('jobs.json', { cache: 'no-cache' })
+  .then((r) => r.json())
+  .then((d) => {
+    ALL = d.jobs || [];
+    $('#updated').textContent = 'Cập nhật: ' + new Date(d.updatedAt).toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' });
+    $('#src-list').innerHTML = Object.entries(d.sources || {}).map(([n, s]) =>
+      `<span class="b ${s.ok ? 'ok' : 'warn'}">${esc(n)}: ${s.ok ? s.kept + ' việc' : 'lỗi'}</span>`).join('');
+  })
+  .catch(() => {})
+  .finally(rerender);
+</script>
+</body>
+</html>
