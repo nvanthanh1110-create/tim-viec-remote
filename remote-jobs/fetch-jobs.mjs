@@ -217,8 +217,19 @@ async function getRates() {
 }
 
 // Dịch sang tiếng Việt qua endpoint công khai của Google Translate.
-async function translate(text) {
+// Gặp HTTP 429 (gửi quá nhiều) thì chờ rồi thử lại.
+async function translate(text, tries = 3) {
   if (!text) return '';
+  for (let i = 0; ; i++) {
+    try { return await translateOnce(text); }
+    catch (e) {
+      if (i + 1 >= tries || !/429|5\d\d/.test(e.message)) throw e;
+      await sleep(15000 * (i + 1));
+    }
+  }
+}
+
+async function translateOnce(text) {
   const res = await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=vi&dt=t', {
     method: 'POST',
     headers: { 'User-Agent': UA, 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
@@ -424,18 +435,21 @@ async function main() {
     if (prev[j.id]) { j.vi = prev[j.id]; reused++; continue; }
     if (translated >= MAX_NEW_TRANSLATIONS || failed >= 5) continue;
     try {
-      const title = await translate(j.title);
-      await sleep(250);
-      const summary = await translate(j.excerpt);
-      await sleep(250);
-      const reqText = j.requirements.length ? await translate(j.requirements.join('\n')) : '';
-      await sleep(250);
+      // Dịch cả tiêu đề, tóm tắt, yêu cầu trong 1 lần gửi (mỗi phần 1 dòng).
+      const parts = [j.title, j.excerpt || '-', ...j.requirements].map((t) => t.replace(/\n/g, ' '));
+      let out = (await translate(parts.join('\n'))).split('\n').map((t) => t.trim());
+      if (out.length !== parts.length) {
+        // Hiếm khi số dòng lệch: dịch riêng từng phần.
+        out = [];
+        for (const t of parts) { out.push(await translate(t)); await sleep(800); }
+      }
       j.vi = {
-        title,
-        summary,
-        requirements: reqText ? reqText.split('\n').map((s) => s.trim()).filter(Boolean) : [],
+        title: out[0],
+        summary: j.excerpt ? out[1] : '',
+        requirements: out.slice(2).filter(Boolean),
       };
       translated++;
+      await sleep(1200);
     } catch (e) {
       failed++;
       console.warn(`✗ Dịch "${j.title}": ${e.message}`);
