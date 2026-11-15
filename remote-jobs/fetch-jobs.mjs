@@ -27,7 +27,7 @@ export const CATEGORIES = {
   seo: [
     /\bseo\b/, /search engine/, /content writ/, /copywrit/, /content market/,
     /blog (writer|post)/, /link ?build/, /content strateg/, /content editor/,
-    /technical writer/, /\bwriter\b/, /content creator/, /content specialist/,
+    /technical writer/, /\bwriter\b/, /content creator/, /content specialist/, /viết bài/, /biên tập/,
   ],
   ai: [
     /\bai (trainer|tutor|writer|rater|evaluator|data|content|annotat)/, /data annotat/,
@@ -37,7 +37,13 @@ export const CATEGORIES = {
   ],
   translation: [
     /translat/, /locali[sz]/, /vietnamese/, /interpret/, /\bmtpe\b/,
-    /post[- ]?edit/, /linguist/, /transcri/, /subtitl/, /bilingual/,
+    /post[- ]?edit/, /linguist/, /transcri/, /subtitl/, /bilingual/, /biên dịch/, /phiên dịch/, /dịch thuật/,
+  ],
+  teach: [
+    /english (teacher|tutor|instructor|coach|trainer|speaking|conversation)/, /\besl\b/, /\btefl\b/, /\btesol\b/,
+    /\bielts\b/, /\btoeic\b/, /teaching assistant/, /language (tutor|teacher)/, /\btutor\b/,
+    /gia sư/, /trợ giảng/, /giáo viên/, /giảng viên tiếng anh/, /dạy tiếng anh/, /tiếng anh (giao tiếp|trẻ em|online)/,
+    /chăm sóc học viên/, /học thuật/,
   ],
   va: [
     /virtual assistant/, /social media/, /community manag/, /marketing (assistant|coordinator|specialist|associate)/,
@@ -60,7 +66,10 @@ export function classify(text) {
 const OPEN_GEO = /(worldwide|anywhere|global|international|asia|apac|vietnam|viet nam|southeast|sea\b|remote$|^$|no restriction|all countries)/i;
 export const geoOpen = (loc) => OPEN_GEO.test((loc || '').trim());
 
-const FLEX = /(freelance|contract|part[- ]?time|hourly|temporary|flexible|gig|per task)/i;
+const ONLINE = /(online|từ xa|remote|tại nhà|work from home|\bwfh\b|làm việc tại nhà)/i;
+const VI_TEXT = /[ăâđêôơưạảấầẩẫậắằẳẵặẹẻẽếềểễệịỉĩọỏốồổỗộớờởỡợụủứừửữựỳỷỹý]/i;
+
+const FLEX = /(freelance|contract|part[- ]?time|hourly|temporary|flexible|gig|per task|bán thời gian|thời vụ|cộng tác viên|\bctv\b|theo buổi)/i;
 
 // ---------- Xử lý văn bản ----------
 const decode = (s = '') =>
@@ -136,7 +145,7 @@ const PER = (p = '') => {
   if (/^day/.test(p)) return 'day';
   return '';
 };
-const HOURS = { hour: 1, day: 8, week: 40, month: 160, year: 1920 };
+const HOURS = { hour: 1, session: 1.5, day: 8, week: 40, month: 160, year: 1920 };
 const num = (s, k) => {
   const n = parseFloat(String(s).replace(/,/g, ''));
   return k ? n * 1000 : n;
@@ -150,6 +159,8 @@ const plausible = (v, p) =>
 // Đọc mức lương từ chuỗi chữ, ví dụ "$20-30/hr", "USD 50k – 70k per year", "40 - 60 USD/hour".
 export function parseSalary(text = '') {
   const t = String(text);
+  const vnd = parseVnd(t);
+  if (vnd) return vnd;
   const C = String.raw`(US\$|\$|USD|€|EUR|£|GBP|CAD|AUD)`;
   const N = String.raw`(\d{1,3}(?:[,.]\d{3})+|\d+(?:\.\d+)?)\s*(k\b|K\b)?(?!\s*(?:m\b|mm\b|b\b|bn\b|million|billion|\+|%))`;
   const P = String.raw`(?:\s*(?:\/|per|an?|each)\s*(hour|hr|h\b|month|mo\b|year|yr|annum|week|day))?`;
@@ -173,6 +184,26 @@ export function parseSalary(text = '') {
     const period = PER(per) || guessPeriod(max);
     if (!plausible(max, period)) continue;
     return { min, max, currency: CUR[cur.toLowerCase()] || 'USD', period };
+  }
+  return null;
+}
+
+// Lương tiếng Việt: "8 - 12 triệu", "Tới 15 triệu", "150.000 - 200.000đ/buổi", "120k/giờ".
+export function parseVnd(t = '') {
+  const tr = t.match(/(?:từ\s*|tới\s*|đến\s*|up to\s*)?(\d+(?:[.,]\d+)?)\s*(?:(?:-|–|đến|tới)\s*(\d+(?:[.,]\d+)?))?\s*(triệu|tr\b)/i);
+  if (tr) {
+    const f = (x) => parseFloat(x.replace(',', '.')) * 1e6;
+    const a = f(tr[1]), b = tr[2] ? f(tr[2]) : a;
+    if (b >= 1e6 && b <= 2e8) return { min: Math.min(a, b), max: Math.max(a, b), currency: 'VND', period: 'month' };
+  }
+  const NV = String.raw`(\d{2,3}(?:[.,]\d{3})+|\d{2,3}\s*k)`;
+  const m = t.match(new RegExp(`${NV}\\s*(?:đ|vnđ|vnd|đồng)?\\s*(?:(?:-|–|đến)\\s*${NV}\\s*(?:đ|vnđ|vnd|đồng)?)?\\s*(?:\\/|một|mỗi|per)\\s*(giờ|h\\b|buổi|ca|tiết|tháng)`, 'i'));
+  if (m) {
+    const f = (x) => (/k$/i.test(x.trim()) ? parseFloat(x) * 1000 : parseFloat(x.replace(/[.,]/g, '')));
+    const a = f(m[1]), b = m[2] ? f(m[2]) : a;
+    const unit = m[3].toLowerCase();
+    const period = unit === 'tháng' ? 'month' : /buổi|ca/.test(unit) ? 'session' : 'hour';
+    if (b >= 20000) return { min: Math.min(a, b), max: Math.max(a, b), currency: 'VND', period };
   }
   return null;
 }
@@ -264,7 +295,7 @@ const yearly = (min, max, currency) =>
 
 const SOURCES = {
   async Remotive() {
-    const searches = ['seo', 'content writer', 'copywriter', 'translation', 'translator', 'vietnamese', 'virtual assistant', 'social media', 'ai trainer', 'annotation', 'data labeling'];
+    const searches = ['seo', 'content writer', 'copywriter', 'translation', 'translator', 'vietnamese', 'virtual assistant', 'social media', 'ai trainer', 'annotation', 'data labeling', 'english teacher', 'tutor', 'esl'];
     const out = [];
     for (const q of searches) {
       const d = await get(`https://remotive.com/api/remote-jobs?search=${encodeURIComponent(q)}&limit=100`);
@@ -350,6 +381,72 @@ const SOURCES = {
     return out;
   },
 
+  // VietnamWorks: API tìm kiếm mà chính trang web dùng (không chính thức, có thể đổi).
+  async VietnamWorks() {
+    const queries = ['gia sư tiếng anh', 'trợ giảng tiếng anh', 'giáo viên tiếng anh online', 'tiếng anh part time', 'biên dịch tiếng anh', 'seo remote', 'content seo', 'cộng tác viên viết bài'];
+    const out = [];
+    let ok = 0, lastErr;
+    for (const query of queries) {
+      let d;
+      try {
+        const res = await fetch('https://ms.vietnamworks.com/job-search/v1.0/search', {
+          method: 'POST',
+          headers: { 'User-Agent': UA, 'Content-Type': 'application/json', Accept: 'application/json', Origin: 'https://www.vietnamworks.com', Referer: 'https://www.vietnamworks.com/' },
+          body: JSON.stringify({ userId: 0, query, filter: [], ranges: [], order: [], hitsPerPage: 50, page: 0 }),
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        d = await res.json();
+        ok++;
+      } catch (e) { lastErr = e; continue; }
+      for (const j of d.data || []) {
+        const salary = j.salaryMax || j.salaryMin
+          ? { min: +j.salaryMin || +j.salaryMax, max: +j.salaryMax || +j.salaryMin, currency: (j.salaryCurrency || 'VND').toUpperCase(), period: (+j.salaryMax || +j.salaryMin) > 1e5 || (+j.salaryMax || 0) > 300 ? 'month' : 'hour' }
+          : null;
+        out.push({
+          title: j.jobTitle, company: j.companyName,
+          url: j.jobUrl || (j.alias && j.jobId ? `https://www.vietnamworks.com/${j.alias}-${j.jobId}-jv` : ''),
+          date: j.approvedOn || j.createdOn || j.onlineOn,
+          location: [...new Set((j.workingLocations || []).map((l) => l.cityNameVI || l.cityName).filter(Boolean))].join(', ') || 'Việt Nam',
+          type: j.typeWorkingId === 2 ? 'Bán thời gian' : '', salary: salary && salary.currency === 'VND' && salary.max < 1e6 ? null : salary,
+          salaryText: j.prettySalary || '',
+          tags: (j.skills || []).map((x) => x.skillName || x).filter((x) => typeof x === 'string'),
+          description: `${j.jobDescription || ''}<h3>Yêu cầu</h3>${j.jobRequirement || ''}`,
+          vn: true,
+        });
+      }
+    }
+    if (!ok) throw lastErr || new Error('không có kết quả');
+    return out;
+  },
+
+  // TopCV: đọc trang kết quả tìm kiếm (không có API công khai).
+  async TopCV() {
+    const slugs = ['gia-su-tieng-anh', 'tro-giang-tieng-anh', 'giao-vien-tieng-anh-online', 'tieng-anh-part-time', 'seo-remote', 'cong-tac-vien-viet-bai'];
+    const out = [];
+    let ok = 0, lastErr;
+    for (const slug of slugs) {
+      let html;
+      try { html = await get(`https://www.topcv.vn/tim-viec-lam-${slug}`, 'text'); ok++; }
+      catch (e) { lastErr = e; continue; }
+      const blocks = html.split(/class="job-item-search-result/).slice(1);
+      for (const b of blocks) {
+        const link = b.match(/href="(https:\/\/www\.topcv\.vn\/(?:viec-lam|brand)\/[^"?]+)/);
+        const title = b.match(/<h3[^>]*>[\s\S]*?<span[^>]*title="([^"]+)"/) || b.match(/<h3[^>]*>\s*<a[^>]*>\s*(?:<span[^>]*>)?([^<]+)/);
+        if (!link || !title) continue;
+        const company = b.match(/class="company[^"]*"[\s\S]*?<span[^>]*class="company-name"[^>]*>([^<]+)/) || b.match(/class="company[^"]*"[^>]*>\s*(?:<[^>]+>\s*)*([^<]+)/);
+        const salary = b.match(/class="title-salary"[^>]*>([^<]+)/);
+        const city = b.match(/class="city-text"[^>]*>([^<]+)/);
+        out.push({
+          title: decode(title[1]).trim(), company: company ? decode(company[1]).trim() : '',
+          url: link[1], date: null, location: city ? decode(city[1]).trim() : 'Việt Nam', type: '',
+          salaryText: salary ? decode(salary[1]).trim() : '', tags: [], description: '', vn: true,
+        });
+      }
+    }
+    if (!ok) throw lastErr;
+    return out;
+  },
+
   async 'Working Nomads'() {
     const d = await get('https://www.workingnomads.com/api/exposed_jobs/');
     return d.map((j) => ({
@@ -405,9 +502,11 @@ async function main() {
           source: name,
           date: Number.isFinite(ts) ? new Date(ts).toISOString() : null,
           location: strip(j.location || '') || 'Không ghi',
-          geoOpen: geoOpen(j.location),
+          geoOpen: j.vn ? true : geoOpen(j.location),
+          vn: !!j.vn,
+          online: j.vn ? ONLINE.test(`${j.title} ${j.location} ${desc}`) : true,
           type: strip(j.type || '').replace(/_/g, ' '),
-          flexible: FLEX.test(`${j.type} ${j.title}`),
+          flexible: FLEX.test(`${j.type} ${j.title} ${j.salaryText || ''}`),
           salaryText: strip(String(j.salaryText || '')),
           salary,
           categories: cats,
@@ -433,6 +532,7 @@ async function main() {
   let translated = 0, reused = 0, failed = 0;
   for (const j of jobs) {
     if (prev[j.id]) { j.vi = prev[j.id]; reused++; continue; }
+    if (j.vn || VI_TEXT.test(j.title)) continue; // tin tiếng Việt: không cần dịch
     if (translated >= MAX_NEW_TRANSLATIONS || failed >= 5) continue;
     try {
       // Dịch cả tiêu đề, tóm tắt, yêu cầu trong 1 lần gửi (mỗi phần 1 dòng).

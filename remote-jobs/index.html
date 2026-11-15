@@ -10,18 +10,18 @@
 :root{
   --bg:#f6f7f9;--surface:#fff;--surface-2:#f0f2f5;--text:#15181d;--muted:#5d6673;--border:#e1e5ea;
   --accent:#2457d6;--accent-soft:#e7eefc;--ok:#167a4a;--ok-soft:#e3f4ea;--warn:#9a5b00;--warn-soft:#fdf1dc;
-  --c-seo:#2457d6;--c-ai:#7a3fd1;--c-translation:#0b7f86;--c-va:#b4461b;
+  --c-seo:#2457d6;--c-ai:#7a3fd1;--c-translation:#0b7f86;--c-va:#b4461b;--c-teach:#a1307a;
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#0f1216;--surface:#171b21;--surface-2:#1f242c;--text:#e8ebef;--muted:#9aa3ae;--border:#2a3039;
   --accent:#7ea4ff;--accent-soft:#1d2a47;--ok:#5fd19a;--ok-soft:#173327;--warn:#f0b45a;--warn-soft:#3a2c14;
-  --c-seo:#7ea4ff;--c-ai:#b893ff;--c-translation:#5fd0d6;--c-va:#ff9a70;color-scheme:dark;
+  --c-seo:#7ea4ff;--c-ai:#b893ff;--c-translation:#5fd0d6;--c-va:#ff9a70;--c-teach:#f28ccf;color-scheme:dark;
 }}
 :root[data-theme="dark"]{
   --bg:#0f1216;--surface:#171b21;--surface-2:#1f242c;--text:#e8ebef;--muted:#9aa3ae;--border:#2a3039;
   --accent:#7ea4ff;--accent-soft:#1d2a47;--ok:#5fd19a;--ok-soft:#173327;--warn:#f0b45a;--warn-soft:#3a2c14;
-  --c-seo:#7ea4ff;--c-ai:#b893ff;--c-translation:#5fd0d6;--c-va:#ff9a70;color-scheme:dark;
+  --c-seo:#7ea4ff;--c-ai:#b893ff;--c-translation:#5fd0d6;--c-va:#ff9a70;--c-teach:#f28ccf;color-scheme:dark;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -55,7 +55,7 @@ label.tg{display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer}
 .badges{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}
 .b{font-size:12px;padding:2px 8px;border-radius:6px;background:var(--surface-2);color:var(--muted)}
 .b.cat{color:#fff}
-.b.cat.seo{background:var(--c-seo)}.b.cat.ai{background:var(--c-ai)}.b.cat.translation{background:var(--c-translation)}.b.cat.va{background:var(--c-va)}
+.b.cat.seo{background:var(--c-seo)}.b.cat.ai{background:var(--c-ai)}.b.cat.translation{background:var(--c-translation)}.b.cat.va{background:var(--c-va)}.b.cat.teach{background:var(--c-teach)}
 :root[data-theme="dark"] .b.cat{color:#0f1216}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .b.cat{color:#0f1216}}
 .b.ok{background:var(--ok-soft);color:var(--ok)}.b.warn{background:var(--warn-soft);color:var(--warn)}
@@ -104,6 +104,26 @@ details.vi .orig{color:var(--muted);font-size:13px}
 .ov-table td.n{font-variant-numeric:tabular-nums}
 .ov-note{color:var(--muted);font-size:13px;margin:8px 0 0}
 .tbl-wrap{overflow-x:auto}
+.btn.cv{border-color:var(--accent);color:var(--accent)}
+.btn.cv.has{background:var(--accent-soft)}
+dialog#cv-dialog{border:1px solid var(--border);border-radius:14px;padding:0;width:min(760px,calc(100% - 24px));max-height:calc(100dvh - 24px);background:var(--surface);color:var(--text)}
+dialog#cv-dialog::backdrop{background:rgba(0,0,0,.45)}
+.dlg-head{position:sticky;top:0;background:var(--surface);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;justify-content:space-between;gap:10px;align-items:start;z-index:1}
+.dlg-head h3{margin:0;font-size:16px}
+.dlg-body{padding:14px 16px 20px}
+.step{border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:12px}
+.step h4{margin:0 0 6px;font-size:15px}
+.step p{margin:4px 0;font-size:14px;color:var(--muted)}
+.meter{height:10px;background:var(--surface-2);border-radius:6px;overflow:hidden;margin:8px 0}
+.meter i{display:block;height:100%;background:var(--ok)}
+.kw{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0}
+textarea{width:100%;font:inherit;font-size:14px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);resize:vertical}
+.cvform label{display:block;font-weight:600;margin:14px 0 6px}
+.cvform .hint{font-weight:400;color:var(--muted);font-size:13px}
+.preview{border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-top:10px;background:var(--surface);max-height:420px;overflow:auto}
+.preview h1{font-size:20px;margin:0 0 4px}.preview h2{font-size:15px;margin:14px 0 4px;border-bottom:1px solid var(--border)}
+.preview h3{font-size:14px;margin:10px 0 2px}.preview p,.preview li{font-size:14px;margin:3px 0}
+.saved-ok{color:var(--ok);font-size:13px;margin-left:6px}
 footer{color:var(--muted);font-size:13px;padding:30px 0 40px}
 .src{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
 </style>
@@ -112,13 +132,14 @@ footer{color:var(--muted);font-size:13px;padding:30px 0 40px}
 <div class="wrap">
 <header>
   <h1>Việc Remote Cho Tôi</h1>
-  <p class="sub">SEO · AI training · Dịch thuật (MTPE) · Trợ lý ảo/Marketing. Tự cập nhật 2 lần mỗi ngày.</p>
+  <p class="sub">SEO · AI training · Dịch thuật (MTPE) · Trợ lý ảo/Marketing · Dạy tiếng Anh. Việc quốc tế và trong nước, tự cập nhật 2 lần mỗi ngày.</p>
 </header>
 
 <nav class="tabs" role="tablist">
   <button class="tab" role="tab" data-tab="jobs" aria-selected="true">Việc mới <span class="n" id="n-jobs">0</span></button>
   <button class="tab" role="tab" data-tab="platforms" aria-selected="false">Nền tảng nên đăng ký</button>
   <button class="tab" role="tab" data-tab="saved" aria-selected="false">Đã lưu / Đã apply <span class="n" id="n-saved">0</span></button>
+  <button class="tab" role="tab" data-tab="cv" aria-selected="false">📝 CV của tôi</button>
   <button class="tab" role="tab" data-tab="guide" aria-selected="false">Mẹo & cảnh báo lừa đảo</button>
 </nav>
 
@@ -140,6 +161,7 @@ footer{color:var(--muted);font-size:13px;padding:30px 0 40px}
       <label class="tg"><input type="checkbox" id="f-flex" /> Chỉ freelance / part-time / hợp đồng</label>
       <label class="tg"><input type="checkbox" id="f-hide" checked /> Ẩn việc đã apply</label>
       <label class="tg"><input type="checkbox" id="f-salary" /> Chỉ việc có ghi lương</label>
+      <label class="tg"><input type="checkbox" id="f-online" /> Ẩn việc phải đến trực tiếp</label>
       <select id="sort" aria-label="Sắp xếp">
         <option value="new">Mới nhất</option>
         <option value="pay">Lương cao nhất</option>
@@ -162,6 +184,23 @@ footer{color:var(--muted);font-size:13px;padding:30px 0 40px}
 <section class="panel" id="p-saved" hidden>
   <div class="meta-bar"><span>Lưu trên trình duyệt này. Xoá dữ liệu trình duyệt thì danh sách cũng mất.</span></div>
   <div class="list" id="saved-list"></div>
+</section>
+
+<!-- ===== CV ===== -->
+<section class="panel" id="p-cv" hidden>
+  <div class="note"><b>Cách dùng:</b> Dán CV hiện tại của bạn vào đây một lần. Sau đó ở mỗi tin tuyển dụng, bấm <b>📝 CV cho job này</b>. Trang sẽ chấm độ khớp, chỉ ra kỹ năng job cần mà CV chưa có, và soạn sẵn lệnh để bạn dán vào Claude hoặc ChatGPT. AI sẽ viết lại CV + thư ứng tuyển đúng theo job, bạn dán kết quả về để in ra PDF. CV chỉ lưu trên trình duyệt này, không gửi đi đâu.</div>
+  <div class="cvform">
+    <label for="cv-text">CV hiện tại <span class="hint">(dán chữ từ file Word/PDF, tiếng Anh hoặc tiếng Việt đều được)</span></label>
+    <textarea id="cv-text" rows="16" placeholder="Dán nội dung CV của bạn vào đây…"></textarea>
+    <div class="actions" style="margin-top:8px">
+      <button class="btn" id="cv-template">Chưa có CV? Dùng khung CV mẫu</button>
+    </div>
+    <label for="cv-extra">Thông tin thêm cho AI <span class="hint">(những điều chưa có trong CV nhưng là sự thật: thành tích, số liệu, công cụ, mong muốn…)</span></label>
+    <textarea id="cv-extra" rows="6"></textarea>
+    <div class="actions" style="margin-top:10px">
+      <button class="btn primary" id="cv-save">Lưu CV</button><span class="saved-ok" id="cv-saved"></span>
+    </div>
+  </div>
 </section>
 
 <!-- ===== Mẹo ===== -->
@@ -189,6 +228,8 @@ footer{color:var(--muted);font-size:13px;padding:30px 0 40px}
   </ul>
 </section>
 
+<dialog id="cv-dialog"></dialog>
+
 <footer>
   Nguồn tin tự động: <span class="src" id="src-list"></span>
   <p>Tin lấy từ API/RSS công khai của các trang trên, bao gồm dữ liệu từ <a href="https://remoteok.com" target="_blank" rel="noopener">Remote OK</a>. Luôn đọc kỹ tin gốc trước khi apply.</p>
@@ -201,6 +242,7 @@ const CATS = {
   ai: 'AI training',
   translation: 'Dịch thuật',
   va: 'Trợ lý ảo / Marketing',
+  teach: 'Dạy tiếng Anh / Trợ giảng',
 };
 
 const PLATFORMS = [
@@ -228,7 +270,15 @@ const PLATFORMS = [
     { name: 'ProBlogger Jobs', url: 'https://problogger.com/jobs/', pay: 'Theo bài', desc: 'Việc viết blog và content tiếng Anh.' },
     { name: 'OnlineJobs.ph', url: 'https://www.onlinejobs.ph/jobseekers/jobsearch', pay: 'Theo tháng', desc: 'Việc trợ lý ảo/SEO cho khách Mỹ, Úc. Chủ yếu tuyển người Philippines nhưng một số tin nhận cả Đông Nam Á.' },
   ]},
-  { group: 'Trong nước', sub: 'Không có RSS công khai nên không tự lấy được. Bấm vào là ra sẵn kết quả tìm kiếm.', items: [
+  { group: 'Dạy tiếng Anh online / Trợ giảng', sub: 'Bạn đang làm trợ giảng: đây là kinh nghiệm thật để đưa vào hồ sơ. Các nền tảng dưới đây nhận cả giáo viên không phải người bản ngữ (kiểm tra điều kiện mới nhất khi đăng ký).', items: [
+    { name: 'Preply', url: 'https://preply.com/en/teach', pay: 'Tự đặt giá/giờ', desc: 'Nhận gia sư không bản ngữ. Dạy tiếng Anh cho người mới, hoặc dạy tiếng Việt cho người nước ngoài.' },
+    { name: 'italki', url: 'https://teach.italki.com', pay: 'Tự đặt giá/giờ', desc: 'Đăng ký "Community Tutor" (không cần bằng sư phạm) để dạy hội thoại tiếng Anh hoặc tiếng Việt.' },
+    { name: 'AmazingTalker', url: 'https://www.amazingtalker.com/teach', pay: 'Tự đặt giá', desc: 'Nhiều học viên châu Á, nhận giáo viên tiếng Anh không bản ngữ.' },
+    { name: 'Antoree', url: 'https://antoree.com', pay: 'Theo giờ', desc: 'Nền tảng học tiếng Anh 1 kèm 1 của Việt Nam. Tuyển giáo viên người Việt cho học viên mới bắt đầu.' },
+    { name: 'TopCV: trợ giảng tiếng Anh', url: 'https://www.topcv.vn/tim-viec-lam-tro-giang-tieng-anh', pay: 'VNĐ', desc: 'Trợ giảng ở trung tâm (thường có ca tối và cuối tuần). Một phần đã tự lấy về tab Việc mới.' },
+    { name: 'Nhóm Facebook gia sư', url: 'https://www.facebook.com/search/groups/?q=gia%20s%C6%B0%20ti%E1%BA%BFng%20anh%20online', pay: 'Theo buổi', desc: 'Nhiều lớp gia sư tiếng Anh. Cẩn thận: KHÔNG đóng "phí nhận lớp" trước cho người lạ.' },
+  ]},
+  { group: 'Trong nước', sub: 'Tab Việc mới đã tự lấy một phần tin từ VietnamWorks và TopCV. Bấm vào đây để xem đầy đủ và lọc thêm.', items: [
     { name: 'TopCV: SEO remote', url: 'https://www.topcv.vn/tim-viec-lam-seo-remote', pay: 'VNĐ', desc: 'Lọc thêm "Bán thời gian" hoặc "Freelance".' },
     { name: 'VietnamWorks', url: 'https://www.vietnamworks.com/viec-lam?q=seo%20remote', pay: 'VNĐ', desc: 'Nhiều việc ở agency và công ty nước ngoài.' },
     { name: 'vLance / freelancerviet.vn', url: 'https://www.freelancerviet.vn', pay: 'VNĐ', desc: 'Chợ freelance Việt Nam: viết bài SEO, dịch, trợ lý.' },
@@ -247,7 +297,7 @@ const prefs = store.get('rj-prefs', {});
 
 let ALL = [];
 let shown = 40;
-const state = { cats: new Set(prefs.cats || []), q: '', age: prefs.age || 7, geo: prefs.geo ?? true, flex: prefs.flex ?? false, hide: prefs.hide ?? true, salary: prefs.salary ?? false, sort: prefs.sort || 'new' };
+const state = { cats: new Set(prefs.cats || []), q: '', age: prefs.age || 7, geo: prefs.geo ?? true, flex: prefs.flex ?? false, hide: prefs.hide ?? true, salary: prefs.salary ?? false, online: prefs.online ?? false, sort: prefs.sort || 'new' };
 
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -259,7 +309,7 @@ const ago = (iso) => {
   return `${Math.floor(d / 24)} ngày trước`;
 };
 
-const PERIOD = { hour: 'giờ', day: 'ngày', week: 'tuần', month: 'tháng', year: 'năm' };
+const PERIOD = { hour: 'giờ', session: 'buổi', day: 'ngày', week: 'tuần', month: 'tháng', year: 'năm' };
 const HOURS_PER_DAY = 3; // bạn làm vài giờ/ngày
 let VND_RATE = 26300;
 
@@ -280,15 +330,17 @@ function salaryBox(j) {
     return `<div class="salary none"><div class="s-head"><span class="s-main">💰 Tin không ghi lương</span></div>
       <div class="s-orig">${ref ? `Tham khảo: các tin "${CATS[j.categories[0]]}" có ghi lương trả trung bình khoảng <b>$${fmtNum(ref)}/giờ</b> (≈ ${fmtVnd(ref * VND_RATE)} ₫/giờ). ` : ''}Nên hỏi mức lương trước khi nhận việc.</div></div>`;
   }
-  const cur = s.currency === 'USD' ? '$' : s.currency + ' ';
+  const isVnd = s.currency === 'VND';
+  const cur = s.currency === 'USD' ? '$' : isVnd ? '' : s.currency + ' ';
+  const main = isVnd ? `${range(s.min, s.max, fmtVnd)} ₫` : `${cur}${range(s.min, s.max, fmtNum)}`;
   const hMin = s.vndHourMin, hMax = s.vndHourMax;
   const part = range(hMin * HOURS_PER_DAY * 22, hMax * HOURS_PER_DAY * 22, fmtVnd);
   const full = range(hMin * 160, hMax * 160, fmtVnd);
   return `<div class="salary">
-    <div class="s-head"><span class="s-main">💰 ${cur}${range(s.min, s.max, fmtNum)}/${PERIOD[s.period]}</span>
-      ${s.period === 'hour' && s.currency === 'USD' ? '' : `<span class="s-orig">≈ $${range(s.usdHourMin, s.usdHourMax, fmtNum)}/giờ</span>`}</div>
+    <div class="s-head"><span class="s-main">💰 ${main}/${PERIOD[s.period]}</span>
+      ${(s.period === 'hour' && s.currency === 'USD') || isVnd ? '' : `<span class="s-orig">≈ $${range(s.usdHourMin, s.usdHourMax, fmtNum)}/giờ</span>`}</div>
     <div class="s-grid">
-      <div class="s-cell"><small>Quy ra mỗi giờ</small><b>${range(hMin, hMax, fmtVnd)} ₫</b></div>
+      <div class="s-cell"><small>Quy ra mỗi giờ${s.period === 'session' ? ' (1 buổi ≈ 1,5 giờ)' : ''}</small><b>${range(hMin, hMax, fmtVnd)} ₫</b></div>
       <div class="s-cell"><small>Làm ${HOURS_PER_DAY}h/ngày × 22 ngày</small><b>≈ ${part} ₫/tháng</b></div>
       <div class="s-cell"><small>Nếu làm toàn thời gian</small><b>≈ ${full} ₫/tháng</b></div>
     </div></div>`;
@@ -321,7 +373,9 @@ function card(j) {
     <div class="co">${esc(j.company || 'Không rõ công ty')} · ${esc(j.source)}${j.date ? ' · ' + ago(j.date) : ''}</div>
     <div class="badges">
       ${j.categories.map((c) => `<span class="b cat ${c}">${CATS[c]}</span>`).join('')}
-      ${j.vietnamese ? '<span class="b ok">Có nhắc tiếng Việt</span>' : ''}
+      ${j.vn ? '<span class="b">🇻🇳 Trong nước</span>' : ''}
+      ${j.vn ? (j.online ? '<span class="b ok">Online / từ xa</span>' : '<span class="b warn">Có thể phải đến trực tiếp</span>') : ''}
+      ${j.vietnamese && !j.vn ? '<span class="b ok">Có nhắc tiếng Việt</span>' : ''}
       <span class="b ${j.geoOpen ? 'ok' : 'warn'}">📍 ${esc(j.location)}</span>
       ${j.type ? `<span class="b">${esc(j.type)}</span>` : ''}
       ${j.years ? `<span class="b">${j.years}+ năm KN</span>` : ''}
@@ -329,14 +383,265 @@ function card(j) {
       ${j.async ? '<span class="b ok">Không cần họp</span>' : ''}
     </div>
     ${salaryBox(j)}
-    ${viBlock(j)}
+    ${j.vn ? (j.requirements?.length ? `<details class="vi"><summary>Yêu cầu công việc</summary><ul>${j.requirements.map((r) => `<li>${esc(r)}</li>`).join('')}</ul></details>` : '') : viBlock(j)}
     <div class="actions">
       <a class="btn primary" href="${esc(j.url)}" target="_blank" rel="noopener">Xem & apply ↗</a>
+      <button class="btn cv${cvJobs[j.id] ? ' has' : ''}" data-cv="${esc(j.id)}">${cvJobs[j.id] ? '📝 Xem CV đã chỉnh' : '📝 CV cho job này'}</button>
       <button class="btn" data-save="${esc(j.id)}" aria-pressed="${isSaved}">${isSaved ? '★ Đã lưu' : '☆ Lưu'}</button>
       <button class="btn" data-apply="${esc(j.id)}" aria-pressed="${isApplied}">${isApplied ? '✓ Đã apply' : 'Đánh dấu đã apply'}</button>
     </div>
   </article>`;
 }
+
+// ================= CV =================
+let cvData = store.get('rj-cv', { cv: '', extra: '' });
+let cvJobs = store.get('rj-cvjobs', {}); // id -> văn bản AI trả về
+let cvCurrent = null;
+
+const DEFAULT_EXTRA = `26 tuổi, sống tại Việt Nam.
+Làm SEO [số] năm: [nghiên cứu từ khóa, viết/tối ưu bài, audit, link building…], công cụ: [Ahrefs/Semrush/GA4/Search Console…].
+Dùng thành thạo AI (ChatGPT, Claude…) cho nghiên cứu, viết nội dung và dịch.
+Đang làm trợ giảng tiếng Anh tại [tên trung tâm] từ [tháng/năm]: [lớp/độ tuổi, nhiệm vụ].
+Tiếng Anh: đọc viết tốt, nói ở mức khá. Tiếng Việt: bản ngữ.
+Mong muốn: việc remote/part-time vài giờ mỗi ngày, làm linh hoạt.`;
+
+const CV_TEMPLATE = `[HỌ VÀ TÊN]
+[Email] · [Số điện thoại] · [Thành phố], Việt Nam · [LinkedIn/Portfolio]
+
+SUMMARY
+SEO specialist with [X] years of experience in keyword research, on-page optimization and content. Skilled at using AI tools (ChatGPT, Claude) for research, writing and translation. Currently working as an English teaching assistant. Native Vietnamese, strong written English.
+
+SKILLS
+- SEO: keyword research, on-page SEO, technical audit, link building, content optimization
+- Tools: Google Search Console, Google Analytics (GA4), Ahrefs/Semrush, WordPress, Google Sheets
+- AI: ChatGPT, Claude, prompt writing, AI-assisted translation & post-editing
+- Languages: Vietnamese (native), English (reading/writing: advanced)
+- Teaching: classroom support, lesson preparation, student feedback
+
+EXPERIENCE
+SEO Specialist — [Company] ([MM/YYYY] – [MM/YYYY or Present])
+- [Kết quả có số liệu, ví dụ: Grew organic traffic X% in Y months]
+- [Nhiệm vụ chính]
+
+English Teaching Assistant — [Center] ([MM/YYYY] – Present)
+- Support [lớp, độ tuổi, số học viên] classes; prepare materials; give feedback to students
+- [Thành tích khác]
+
+EDUCATION
+[Ngành] — [Trường] ([năm tốt nghiệp])
+
+CERTIFICATIONS
+- [IELTS/TOEIC điểm…, Google Analytics, …]`;
+
+const KEYWORDS = [
+  ['SEO', /\bseo\b/i], ['On-page SEO', /on[- ]page/i], ['Technical SEO', /technical seo|seo kỹ thuật|site audit/i],
+  ['Keyword research', /keyword research|nghiên cứu từ khóa|từ khoá/i], ['Link building', /link ?build|backlink/i],
+  ['Google Analytics / GA4', /google analytics|\bga4\b/i], ['Search Console', /search console|\bgsc\b/i],
+  ['Ahrefs', /ahrefs/i], ['Semrush', /semrush/i], ['WordPress', /wordpress/i], ['HTML', /\bhtml\b/i],
+  ['Content writing', /content writ|writing|viết (bài|content|nội dung)/i], ['Copywriting', /copywrit/i],
+  ['Editing / Proofreading', /proofread|\bediting\b|biên tập|hiệu đính/i], ['Social media', /social media|mạng xã hội|tiktok|instagram/i],
+  ['Google Ads', /google ads|adwords|\bppc\b/i], ['Facebook Ads', /facebook ads|meta ads/i], ['Email marketing', /email marketing|newsletter/i],
+  ['Canva', /canva/i], ['Excel / Google Sheets', /excel|google sheets|spreadsheet/i],
+  ['AI tools (ChatGPT, Claude…)', /chatgpt|claude|\bgpt\b|\bllm\b|\bai tools?\b|generative ai|trí tuệ nhân tạo/i], ['Prompt writing', /prompt/i],
+  ['Data annotation', /annotat|labell?ing/i], ['Translation', /translat|biên dịch|dịch thuật|phiên dịch/i], ['Post-editing (MTPE)', /post[- ]?edit|\bmtpe\b/i],
+  ['CAT tools', /cat tools?|trados|memoq|smartcat|matecat/i], ['English', /english|tiếng anh/i], ['Vietnamese', /vietnamese|tiếng việt/i],
+  ['IELTS', /ielts/i], ['TOEIC', /toeic/i], ['TESOL / TEFL / CELTA', /tesol|tefl|celta/i], ['Teaching', /teach|giảng dạy|đứng lớp|dạy học/i],
+  ['Tutoring', /tutor|gia sư/i], ['Teaching assistant', /teaching assistant|trợ giảng/i], ['Lesson planning', /lesson plan|giáo án|soạn bài/i],
+  ['Kids / young learners', /children|\bkids\b|young learners|trẻ em|thiếu nhi/i], ['Communication', /communicat|giao tiếp/i],
+  ['Research', /research|nghiên cứu/i], ['Customer support', /customer (support|service)|chăm sóc khách hàng/i],
+  ['Project tools (Notion, Trello…)', /notion|trello|asana|jira|clickup/i], ['Attention to detail', /attention to detail|detail[- ]oriented|tỉ mỉ|cẩn thận/i],
+  ['Time management', /time management|deadline|quản lý thời gian/i],
+];
+
+function jobText(j) { return `${j.title} ${j.tags.join(' ')} ${(j.requirements || []).join(' ')} ${j.excerpt || ''}`; }
+function matchCv(j) {
+  const jt = jobText(j), ct = `${cvData.cv}\n${cvData.extra}`;
+  const need = KEYWORDS.filter(([, r]) => r.test(jt));
+  const have = need.filter(([, r]) => r.test(ct)).map(([k]) => k);
+  const miss = need.filter(([, r]) => !r.test(ct)).map(([k]) => k);
+  return { have, miss, score: need.length ? Math.round((have.length / need.length) * 100) : null };
+}
+
+function buildPrompt(j) {
+  const lang = j.vn ? 'tiếng Việt' : 'English';
+  const req = (j.requirements || []).map((r) => `- ${r}`).join('\n') || '(Tin không có mục yêu cầu riêng. Hãy suy ra từ tiêu đề, mô tả và link.)';
+  return `Bạn là chuyên gia tuyển dụng và viết CV. Hãy chỉnh CV của tôi cho thật phù hợp với công việc dưới đây.
+
+QUY TẮC BẮT BUỘC:
+1. Chỉ dùng thông tin có thật trong "CV của tôi" và "Thông tin thêm". KHÔNG bịa kinh nghiệm, công ty, bằng cấp hay số liệu. Chỗ nào nên có số liệu mà tôi chưa cung cấp thì để dạng [điền số liệu].
+2. Đưa kinh nghiệm và kỹ năng liên quan nhất tới job lên trước, bỏ bớt phần không liên quan. Viết lại các gạch đầu dòng theo kiểu "động từ + việc làm + kết quả", dùng đúng từ khóa trong tin tuyển dụng (để qua bộ lọc ATS).
+3. CV viết bằng ${lang}, gọn trong 1 trang.
+4. Trả lời ĐÚNG theo khung sau (Markdown), không thêm lời dẫn:
+
+# Họ và tên
+Email · Điện thoại · Thành phố · LinkedIn
+## ${j.vn ? 'Mục tiêu nghề nghiệp' : 'Summary'}
+(2–3 câu nhắm thẳng vào job này)
+## ${j.vn ? 'Kỹ năng' : 'Skills'}
+- ...
+## ${j.vn ? 'Kinh nghiệm làm việc' : 'Experience'}
+### Vị trí — Công ty (thời gian)
+- ...
+## ${j.vn ? 'Học vấn' : 'Education'}
+## ${j.vn ? 'Chứng chỉ & ngôn ngữ' : 'Certifications & Languages'}
+
+=== THƯ ỨNG TUYỂN ===
+(Thư ứng tuyển ngắn 120–180 từ bằng ${lang}, gửi ${j.company || 'nhà tuyển dụng'}, nêu 2–3 điểm khớp nhất với job.)
+
+=== GHI CHÚ CHO TÔI ===
+(Bằng tiếng Việt: yêu cầu nào của job tôi chưa đáp ứng, nên chuẩn bị/trả lời thế nào khi phỏng vấn, và 3 câu hỏi phỏng vấn có thể gặp.)
+
+---------------- CÔNG VIỆC ----------------
+Vị trí: ${j.title}
+Công ty: ${j.company || 'không rõ'}
+Địa điểm: ${j.location}${j.salary ? `\nLương: ${j.salaryText || ''}` : ''}
+Link tin gốc: ${j.url}
+Yêu cầu:
+${req}
+Mô tả ngắn: ${j.excerpt || '(không có)'}
+
+---------------- CV CỦA TÔI ----------------
+${cvData.cv.trim() || '(Tôi chưa có CV. Hãy dựng CV từ "Thông tin thêm" và đánh dấu [cần điền] những chỗ thiếu.)'}
+
+---------------- THÔNG TIN THÊM ----------------
+${cvData.extra.trim() || '(không có)'}`;
+}
+
+function md(text) {
+  const inline = (t) => esc(t).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/(^|[^*])\*([^*]+)\*/g, '$1<i>$2</i>')
+    .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, '<a href="$2">$1</a>');
+  let html = '', inList = false;
+  for (const raw of text.split('\n')) {
+    const l = raw.trim();
+    const li = l.match(/^[-*•]\s+(.*)/);
+    if (inList && !li) { html += '</ul>'; inList = false; }
+    if (!l) continue;
+    if (li) { if (!inList) { html += '<ul>'; inList = true; } html += `<li>${inline(li[1])}</li>`; }
+    else if (l.startsWith('### ')) html += `<h3>${inline(l.slice(4))}</h3>`;
+    else if (l.startsWith('## ')) html += `<h2>${inline(l.slice(3))}</h2>`;
+    else if (l.startsWith('# ')) html += `<h1>${inline(l.slice(2))}</h1>`;
+    else if (/^-{3,}$/.test(l)) html += '<hr>';
+    else html += `<p>${inline(l)}</p>`;
+  }
+  return html + (inList ? '</ul>' : '');
+}
+
+function splitResult(t) {
+  const [cv, rest = ''] = t.split(/^=+\s*THƯ ỨNG TUYỂN\s*=+\s*$/im);
+  const [letter = '', notes = ''] = rest.split(/^=+\s*GHI CHÚ[^=\n]*=+\s*$/im);
+  return { cv: cv.trim(), letter: letter.trim(), notes: notes.trim() };
+}
+
+function printDoc(bodyHtml, title) {
+  const f = document.createElement('iframe');
+  f.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0';
+  document.body.appendChild(f);
+  const d = f.contentDocument;
+  d.open();
+  d.write(`<!doctype html><html lang="vi"><head><meta charset="utf-8"><title>${esc(title)}</title><style>
+    @page{size:A4;margin:16mm 16mm}
+    body{font:11pt/1.45 "Segoe UI",Roboto,Arial,sans-serif;color:#111;margin:0}
+    h1{font-size:22pt;margin:0 0 2pt;letter-spacing:-.01em}
+    h1+p{color:#444;margin:0 0 10pt}
+    h2{font-size:11.5pt;text-transform:uppercase;letter-spacing:.06em;color:#1d4fbf;border-bottom:1.2pt solid #1d4fbf;padding-bottom:2pt;margin:14pt 0 6pt}
+    h3{font-size:11pt;margin:8pt 0 2pt}
+    p{margin:3pt 0}ul{margin:2pt 0 4pt;padding-left:16pt}li{margin:1.5pt 0}
+    a{color:#1d4fbf;text-decoration:none}hr{border:0;border-top:1pt solid #ccc}
+  </style></head><body>${bodyHtml}</body></html>`);
+  d.close();
+  setTimeout(() => { f.contentWindow.focus(); f.contentWindow.print(); setTimeout(() => f.remove(), 2000); }, 250);
+}
+
+function openCv(id) {
+  const j = ALL.find((x) => x.id === id) || saved[id];
+  if (!j) return;
+  cvCurrent = j;
+  renderCvDialog();
+  const dlg = $('#cv-dialog');
+  if (!dlg.open) dlg.showModal();
+}
+
+function renderCvDialog() {
+  const j = cvCurrent, m = matchCv(j), result = cvJobs[j.id] || '';
+  const hasCv = (cvData.cv + cvData.extra).trim().length > 30;
+  const parts = result ? splitResult(result) : null;
+  $('#cv-dialog').innerHTML = `
+    <div class="dlg-head"><div><h3>📝 CV cho: ${esc(j.title)}</h3><div class="co">${esc(j.company || '')}</div></div>
+      <button class="btn" data-dlg="close" aria-label="Đóng">✕</button></div>
+    <div class="dlg-body">
+      ${hasCv ? '' : `<div class="note"><b>Bạn chưa lưu CV.</b> Vào tab <b>📝 CV của tôi</b> để dán CV (hoặc dùng khung mẫu) rồi quay lại. Vẫn có thể bấm bước 2 ngay, AI sẽ dựng CV từ đầu.</div>`}
+      <div class="step"><h4>1. Độ khớp với yêu cầu job</h4>
+        ${m.score === null ? '<p>Tin này có quá ít thông tin để chấm. Hãy đọc tin gốc.</p>' : `
+        <p><b style="color:var(--text)">${m.score}%</b> kỹ năng job nhắc tới đã có trong CV của bạn.</p>
+        <div class="meter"><i style="width:${m.score}%"></i></div>
+        ${m.have.length ? `<p>Đã có:</p><div class="kw">${m.have.map((k) => `<span class="b ok">✓ ${esc(k)}</span>`).join('')}</div>` : ''}
+        ${m.miss.length ? `<p>Job cần nhưng CV chưa thấy (nếu bạn có thật thì bổ sung vào "Thông tin thêm"):</p><div class="kw">${m.miss.map((k) => `<span class="b warn">+ ${esc(k)}</span>`).join('')}</div>` : ''}`}
+        ${j.years ? `<p>Tin yêu cầu khoảng <b>${j.years} năm</b> kinh nghiệm.</p>` : ''}
+      </div>
+      <div class="step"><h4>2. Nhờ AI chỉnh CV theo job</h4>
+        <p>Bấm sao chép, mở Claude hoặc ChatGPT, dán vào (Ctrl+V / giữ để dán) rồi gửi. Lệnh đã kèm sẵn CV của bạn, yêu cầu của job và quy tắc không bịa thông tin.</p>
+        <div class="actions" style="margin-top:8px">
+          <button class="btn primary" data-dlg="copy">📋 Sao chép lệnh cho AI</button>
+          <a class="btn" href="https://claude.ai/new" target="_blank" rel="noopener">Mở Claude ↗</a>
+          <a class="btn" href="https://chatgpt.com/" target="_blank" rel="noopener">Mở ChatGPT ↗</a>
+          <span class="saved-ok" id="copy-ok"></span>
+        </div>
+        <details style="margin-top:8px"><summary style="cursor:pointer;font-size:14px;color:var(--muted)">Xem nội dung lệnh</summary>
+          <textarea id="cv-prompt" rows="10" readonly>${esc(buildPrompt(j))}</textarea></details>
+      </div>
+      <div class="step"><h4>3. Dán kết quả AI trả về → in PDF</h4>
+        <textarea id="cv-result" rows="8" placeholder="Dán toàn bộ câu trả lời của AI vào đây…">${esc(result)}</textarea>
+        <div class="actions" style="margin-top:8px">
+          <button class="btn primary" data-dlg="save">Lưu & xem trước</button>
+          ${parts?.cv ? '<button class="btn" data-dlg="print-cv">🖨️ In / lưu PDF CV</button>' : ''}
+          ${parts?.letter ? '<button class="btn" data-dlg="print-letter">🖨️ In thư ứng tuyển</button>' : ''}
+          ${result ? '<button class="btn" data-dlg="clear">Xoá</button>' : ''}
+        </div>
+        <p>Khi in, chọn máy in là <b>"Lưu thành PDF" / "Save as PDF"</b>.</p>
+        ${parts?.cv ? `<div class="preview">${md(parts.cv)}</div>` : ''}
+        ${parts?.notes ? `<h4 style="margin-top:12px">Ghi chú cho bạn</h4><div class="preview">${md(parts.notes)}</div>` : ''}
+      </div>
+    </div>`;
+}
+
+async function cvAction(act) {
+  const j = cvCurrent;
+  if (act === 'close') return $('#cv-dialog').close();
+  if (act === 'copy') {
+    const text = buildPrompt(j);
+    let ok = false;
+    try { await navigator.clipboard.writeText(text); ok = true; } catch {
+      const ta = $('#cv-prompt'); ta.closest('details').open = true; ta.select();
+      try { ok = document.execCommand('copy'); } catch {}
+    }
+    $('#copy-ok').textContent = ok ? '✓ Đã sao chép' : 'Hãy bôi đen ô bên dưới và sao chép thủ công';
+    return;
+  }
+  if (act === 'save') {
+    const v = $('#cv-result').value.trim();
+    if (v) cvJobs[j.id] = v; else delete cvJobs[j.id];
+    if (v && !saved[j.id]) { saved[j.id] = j; store.set('rj-saved', saved); }
+    store.set('rj-cvjobs', cvJobs); renderCvDialog(); rerender(); return;
+  }
+  if (act === 'clear') { delete cvJobs[j.id]; store.set('rj-cvjobs', cvJobs); renderCvDialog(); rerender(); return; }
+  const parts = splitResult(cvJobs[j.id] || '');
+  if (act === 'print-cv') printDoc(md(parts.cv), `CV - ${j.title}`);
+  if (act === 'print-letter') printDoc(md(parts.letter), `Thu ung tuyen - ${j.title}`);
+}
+
+function saveCv() {
+  cvData = { cv: $('#cv-text').value, extra: $('#cv-extra').value };
+  store.set('rj-cv', cvData);
+  $('#cv-saved').textContent = '✓ Đã lưu trên trình duyệt này';
+  setTimeout(() => ($('#cv-saved').textContent = ''), 3000);
+}
+function useTemplate() {
+  if ($('#cv-text').value.trim() && !confirm('Thay nội dung đang có bằng khung CV mẫu?')) return;
+  $('#cv-text').value = CV_TEMPLATE;
+}
+$('#cv-text').value = cvData.cv;
+$('#cv-extra').value = cvData.extra || DEFAULT_EXTRA;
+$('#cv-dialog').addEventListener('click', (e) => { if (e.target.id === 'cv-dialog') e.target.close(); });
 
 let catMedian = {};
 function renderOverview() {
@@ -363,6 +668,7 @@ function filtered() {
     (!state.flex || j.flexible) &&
     (!state.hide || !applied[j.id]) &&
     (!state.salary || j.salary) &&
+    (!state.online || j.online !== false) &&
     (!q || `${j.title} ${j.company} ${j.tags.join(' ')} ${j.excerpt} ${j.vi?.title || ''} ${j.vi?.summary || ''}`.toLowerCase().includes(q))
   ).sort((a, b) => state.sort === 'pay'
     ? ((b.salary?.usdHourMax || 0) - (a.salary?.usdHourMax || 0))
@@ -377,7 +683,7 @@ function renderJobs() {
     ? list.slice(0, shown).map(card).join('')
     : `<div class="empty">${ALL.length ? 'Không có việc khớp bộ lọc. Thử bỏ bớt bộ lọc hoặc tăng số ngày.' : 'Chưa có dữ liệu. Trang sẽ có việc sau lần chạy cập nhật đầu tiên.'}</div>`;
   $('#more').hidden = list.length <= shown;
-  store.set('rj-prefs', { cats: [...state.cats], age: state.age, geo: state.geo, flex: state.flex, hide: state.hide, salary: state.salary, sort: state.sort });
+  store.set('rj-prefs', { cats: [...state.cats], age: state.age, geo: state.geo, flex: state.flex, hide: state.hide, salary: state.salary, online: state.online, sort: state.sort });
 }
 
 function renderSaved() {
@@ -425,6 +731,10 @@ document.addEventListener('click', (e) => {
     else { applied[id] = new Date().toISOString(); const j = ALL.find((x) => x.id === id); if (j && !saved[id]) saved[id] = j; store.set('rj-saved', saved); }
     store.set('rj-applied', applied); rerender();
   } else if (t.id === 'more') { shown += 40; renderJobs(); }
+  else if (t.dataset.cv) openCv(t.dataset.cv);
+  else if (t.id === 'cv-save') saveCv();
+  else if (t.id === 'cv-template') useTemplate();
+  else if (t.dataset.dlg) cvAction(t.dataset.dlg, t);
 });
 
 $('#q').addEventListener('input', (e) => { state.q = e.target.value; shown = 40; renderJobs(); });
@@ -432,7 +742,7 @@ $('#age').value = String(state.age);
 $('#age').addEventListener('change', (e) => { state.age = +e.target.value; renderJobs(); });
 $('#sort').value = state.sort;
 $('#sort').addEventListener('change', (e) => { state.sort = e.target.value; renderJobs(); });
-for (const [id, k] of [['#f-geo', 'geo'], ['#f-flex', 'flex'], ['#f-hide', 'hide'], ['#f-salary', 'salary']]) {
+for (const [id, k] of [['#f-geo', 'geo'], ['#f-flex', 'flex'], ['#f-hide', 'hide'], ['#f-salary', 'salary'], ['#f-online', 'online']]) {
   $(id).checked = state[k];
   $(id).addEventListener('change', (e) => { state[k] = e.target.checked; shown = 40; renderJobs(); });
 }
