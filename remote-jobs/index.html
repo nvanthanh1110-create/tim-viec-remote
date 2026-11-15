@@ -124,6 +124,10 @@ textarea{width:100%;font:inherit;font-size:14px;padding:10px;border:1px solid va
 .preview h1{font-size:20px;margin:0 0 4px}.preview h2{font-size:15px;margin:14px 0 4px;border-bottom:1px solid var(--border)}
 .preview h3{font-size:14px;margin:10px 0 2px}.preview p,.preview li{font-size:14px;margin:3px 0}
 .saved-ok{color:var(--ok);font-size:13px;margin-left:6px}
+.drop{display:flex !important;flex-direction:column;align-items:center;gap:4px;text-align:center;border:2px dashed var(--border);border-radius:12px;padding:20px 14px;cursor:pointer;font-weight:400 !important;background:var(--surface-2)}
+.drop:hover,.drop.over{border-color:var(--accent);background:var(--accent-soft)}
+.drop-icon{font-size:28px}
+#cv-file-status.err{color:var(--warn)}#cv-file-status.ok{color:var(--ok)}
 footer{color:var(--muted);font-size:13px;padding:30px 0 40px}
 .src{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
 </style>
@@ -188,9 +192,16 @@ footer{color:var(--muted);font-size:13px;padding:30px 0 40px}
 
 <!-- ===== CV ===== -->
 <section class="panel" id="p-cv" hidden>
-  <div class="note"><b>Cách dùng:</b> Dán CV hiện tại của bạn vào đây một lần. Sau đó ở mỗi tin tuyển dụng, bấm <b>📝 CV cho job này</b>. Trang sẽ chấm độ khớp, chỉ ra kỹ năng job cần mà CV chưa có, và soạn sẵn lệnh để bạn dán vào Claude hoặc ChatGPT. AI sẽ viết lại CV + thư ứng tuyển đúng theo job, bạn dán kết quả về để in ra PDF. CV chỉ lưu trên trình duyệt này, không gửi đi đâu.</div>
+  <div class="note"><b>Cách dùng:</b> Tải file CV (hoặc dán nội dung CV) vào đây một lần. Sau đó ở mỗi tin tuyển dụng, bấm <b>📝 CV cho job này</b>. Trang sẽ chấm độ khớp, chỉ ra kỹ năng job cần mà CV chưa có, và soạn sẵn lệnh để bạn dán vào Claude hoặc ChatGPT. AI sẽ viết lại CV + thư ứng tuyển đúng theo job, bạn dán kết quả về để in ra PDF. CV chỉ lưu trên trình duyệt này, không gửi đi đâu.</div>
   <div class="cvform">
-    <label for="cv-text">CV hiện tại <span class="hint">(dán chữ từ file Word/PDF, tiếng Anh hoặc tiếng Việt đều được)</span></label>
+    <label>Tải CV lên <span class="hint">(PDF, Word .docx hoặc .txt. Trang tự đọc chữ trong file, file không bị gửi đi đâu)</span></label>
+    <label class="drop" id="cv-drop" for="cv-file">
+      <input type="file" id="cv-file" accept=".pdf,.docx,.txt,.md,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain" hidden />
+      <span class="drop-icon">📄</span>
+      <span><b>Bấm để chọn file CV</b> hoặc kéo thả file vào đây</span>
+      <span class="hint" id="cv-file-status"></span>
+    </label>
+    <label for="cv-text">Nội dung CV <span class="hint">(tự điền sau khi tải file, bạn sửa lại được, hoặc dán chữ trực tiếp vào đây)</span></label>
     <textarea id="cv-text" rows="16" placeholder="Dán nội dung CV của bạn vào đây…"></textarea>
     <div class="actions" style="margin-top:8px">
       <button class="btn" id="cv-template">Chưa có CV? Dùng khung CV mẫu</button>
@@ -639,6 +650,71 @@ function useTemplate() {
   if ($('#cv-text').value.trim() && !confirm('Thay nội dung đang có bằng khung CV mẫu?')) return;
   $('#cv-text').value = CV_TEMPLATE;
 }
+// ---------- đọc file CV (PDF / DOCX / TXT) ngay trên trình duyệt ----------
+function loadScript(src) {
+  return new Promise((res, rej) => {
+    if (document.querySelector(`script[src="${src}"]`)) return res();
+    const el = document.createElement('script');
+    el.src = src; el.onload = res; el.onerror = () => rej(new Error('Không tải được thư viện đọc file. Kiểm tra mạng.'));
+    document.head.appendChild(el);
+  });
+}
+const PDFJS = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+const PDFJS_WORKER = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+const MAMMOTH = 'https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js';
+
+async function pdfToText(buf) {
+  await loadScript(PDFJS);
+  pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER;
+  const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+  const pages = [];
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const c = await (await pdf.getPage(i)).getTextContent();
+    // Ghép chữ theo dòng dựa vào toạ độ y.
+    let out = '', lastY = null;
+    for (const it of c.items) {
+      const y = Math.round(it.transform[5]);
+      if (lastY !== null && Math.abs(y - lastY) > 2) out += '\n';
+      else if (out && !out.endsWith(' ') && !it.str.startsWith(' ')) out += ' ';
+      out += it.str; lastY = y;
+    }
+    pages.push(out);
+  }
+  return pages.join('\n\n');
+}
+async function docxToText(buf) {
+  await loadScript(MAMMOTH);
+  return (await mammoth.extractRawText({ arrayBuffer: buf })).value;
+}
+const tidy = (t) => t.replace(/\r/g, '').replace(/[ \t]+\n/g, '\n').replace(/\n[ \t]+/g, '\n').replace(/\n{3,}/g, '\n\n').replace(/[ \t]{2,}/g, ' ').trim();
+
+async function readCvFile(file) {
+  const st = $('#cv-file-status');
+  st.className = 'hint'; st.textContent = `Đang đọc "${file.name}"…`;
+  try {
+    const name = file.name.toLowerCase();
+    if (file.size > 15e6) throw new Error('File lớn hơn 15MB.');
+    let text;
+    if (name.endsWith('.pdf')) text = await pdfToText(await file.arrayBuffer());
+    else if (name.endsWith('.docx')) text = await docxToText(await file.arrayBuffer());
+    else if (name.endsWith('.doc')) throw new Error('File .doc (Word cũ) chưa đọc được. Mở bằng Word rồi "Lưu thành" .docx hoặc PDF.');
+    else text = await file.text();
+    text = tidy(text);
+    if (text.length < 30) throw new Error('Không thấy chữ trong file. Có thể CV là ảnh scan. Hãy dùng file Word/PDF gốc, hoặc gõ/dán nội dung vào ô bên dưới.');
+    if ($('#cv-text').value.trim() && !confirm('Thay nội dung CV đang có bằng nội dung file vừa chọn?')) { st.textContent = ''; return; }
+    $('#cv-text').value = text;
+    saveCv();
+    st.className = 'hint ok'; st.textContent = `✓ Đã đọc "${file.name}" (${text.length.toLocaleString('vi-VN')} ký tự) và lưu. Kiểm tra lại nội dung bên dưới.`;
+  } catch (e) {
+    st.className = 'hint err'; st.textContent = '✗ ' + (e.message || 'Không đọc được file này.');
+  }
+}
+$('#cv-file').addEventListener('change', (e) => { const f = e.target.files[0]; if (f) readCvFile(f); e.target.value = ''; });
+const drop = $('#cv-drop');
+['dragenter', 'dragover'].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave', 'drop'].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', (e) => { const f = e.dataTransfer.files[0]; if (f) readCvFile(f); });
+
 $('#cv-text').value = cvData.cv;
 $('#cv-extra').value = cvData.extra || DEFAULT_EXTRA;
 $('#cv-dialog').addEventListener('click', (e) => { if (e.target.id === 'cv-dialog') e.target.close(); });
