@@ -48,11 +48,30 @@ export const CATEGORIES = {
   va: [
     /virtual assistant/, /social media/, /community manag/, /marketing (assistant|coordinator|specialist|associate)/,
     /executive assistant/, /admin(istrative)? assistant/, /personal assistant/,
-    /digital marketing/, /email marketing/, /\bva\b/, /growth marketer/, /content moderat/,
+    /digital marketing/, /email marketing/, /\bva\b/, /growth marketer/,
+  ],
+  ecom: [
+    /amazon (listing|seller|account|ppc|va|virtual|store|fba|marketplace)/, /\b(shopee|lazada|tiktok shop|etsy|shopify|ebay|walmart marketplace)\b/,
+    /e-?commerce (specialist|assistant|manager|seo|listing|coordinator|associate|content|virtual)/, /product (listing|description|content|copy)/,
+    /listing (optim|special|writer)/, /marketplace (specialist|manager|coordinator)/, /thương mại điện tử/, /\btmđt\b/, /quản lý gian hàng/, /sàn (shopee|lazada|tiktok)/,
+  ],
+  automation: [
+    /(ai|marketing|workflow|no[- ]?code|low[- ]?code|business process|process|crm|sales|operations) automation/, /automation (specialist|expert|consultant|developer|builder)/,
+    /\b(zapier|make\.com|n8n|airtable|gohighlevel|clickup automation)\b/, /chatbot/, /ai (agent|workflow|implementation|specialist|consultant|operations|automation)/,
+    /tự động hoá|tự động hóa/,
+  ],
+  support: [
+    /customer (support|service|success|care|experience)/, /support (specialist|agent|representative|associate|advocate)/, /(chat|email|ticket) (support|agent)/,
+    /help ?desk/, /technical support/, /community support/, /chăm sóc khách hàng/, /\bcskh\b/, /tư vấn viên (online|trực tuyến)/, /hỗ trợ khách hàng/,
+  ],
+  review: [
+    /content (moderat|review)/, /trust (&|and) safety/, /\blqa\b/, /linguistic (qa|quality|test|review)/, /locali[sz]ation (test|qa|quality)/,
+    /game test/, /subtitl/, /caption/, /transcri/, /curriculum/, /instructional design/, /(esl|english|educational|learning) (content|material)/,
+    /worksheet/, /lesson (content|material|writer)/, /kiểm duyệt/, /phụ đề/, /soạn (tài liệu|giáo trình|đề|bài giảng)/, /gỡ băng/,
   ],
 };
 
-const EXCLUDE = [/\bsenior (software|backend|frontend|full[- ]?stack)/, /\bengineering manager\b/, /\bdevops\b/];
+const EXCLUDE = [/\bsenior (software|backend|frontend|full[- ]?stack)/, /\bengineering manager\b/, /\bdevops\b/, /(test|qa) automation/, /automation (test|qa)/, /\bsdet\b/];
 
 export function classify(text) {
   const t = text.toLowerCase();
@@ -140,7 +159,10 @@ export function hints(text) {
   const years = y ? +y[1] : null;
   const speaking = /(phone calls?|video calls?|zoom|client calls|meetings|spoken english|verbal communication|speak(ing)? (fluent )?english|cold call)/i.test(text);
   const async = /(async|asynchronous|no (calls|meetings)|flexible (hours|schedule)|work at your own pace|own schedule)/i.test(text);
-  return { years: years && years < 20 ? years : null, speaking, async };
+  // CSKH chỉ qua chat/email (không gọi điện): hợp người nói tiếng Anh còn yếu.
+  const textOnly = /(non[- ]?voice|chat (support|agent)|email support|via (chat|email)|written (support|communication)|no phone|ticket(s|ing)? support|chat và email|qua chat)/i.test(text)
+    && !/(phone support|inbound calls|outbound calls|cold call|voice support|call center)/i.test(text);
+  return { years: years && years < 20 ? years : null, speaking, async, textOnly };
 }
 
 // ---------- Lương ----------
@@ -304,7 +326,7 @@ const yearly = (min, max, currency) =>
 
 const SOURCES = {
   async Remotive() {
-    const searches = ['seo', 'content writer', 'copywriter', 'translation', 'translator', 'vietnamese', 'virtual assistant', 'social media', 'ai trainer', 'annotation', 'data labeling', 'english teacher', 'tutor', 'esl'];
+    const searches = ['seo', 'content writer', 'copywriter', 'translation', 'translator', 'vietnamese', 'virtual assistant', 'social media', 'ai trainer', 'annotation', 'data labeling', 'english teacher', 'tutor', 'esl', 'amazon', 'ecommerce', 'shopify', 'automation', 'zapier', 'chatbot', 'customer support', 'customer service', 'moderator', 'subtitle', 'transcription', 'curriculum', 'instructional design'];
     const out = [];
     for (const q of searches) {
       const d = await get(`https://remotive.com/api/remote-jobs?search=${encodeURIComponent(q)}&limit=100`);
@@ -331,7 +353,7 @@ const SOURCES = {
 
   async Jobicy() {
     // Một số tag có thể bị API từ chối (HTTP 400): bỏ qua tag đó, vẫn lấy các tag khác.
-    const queries = ['', 'tag=seo', 'tag=copywriting', 'tag=translation', 'tag=marketing', 'industry=marketing', 'industry=copywriting'];
+    const queries = ['', 'tag=seo', 'tag=copywriting', 'tag=translation', 'tag=marketing', 'industry=marketing', 'industry=copywriting', 'industry=supporting', 'tag=customer-support', 'tag=ecommerce', 'tag=automation', 'tag=amazon'];
     const out = [];
     let okCount = 0, lastErr;
     for (const q of queries) {
@@ -392,7 +414,7 @@ const SOURCES = {
 
   // VietnamWorks: API tìm kiếm mà chính trang web dùng (không chính thức, có thể đổi).
   async VietnamWorks() {
-    const queries = ['remote', 'làm việc từ xa', 'làm việc tại nhà', 'online part time', 'gia sư tiếng anh online', 'giáo viên tiếng anh online', 'trợ giảng online', 'tiếng anh remote', 'biên dịch online', 'seo remote', 'content remote', 'cộng tác viên online', 'freelance'];
+    const queries = ['remote', 'làm việc từ xa', 'làm việc tại nhà', 'online part time', 'gia sư tiếng anh online', 'giáo viên tiếng anh online', 'trợ giảng online', 'tiếng anh remote', 'biên dịch online', 'seo remote', 'content remote', 'cộng tác viên online', 'freelance', 'chăm sóc khách hàng online', 'thương mại điện tử remote', 'shopee online', 'automation remote', 'kiểm duyệt nội dung', 'phụ đề', 'soạn tài liệu tiếng anh'];
     const out = [];
     let ok = 0, lastErr;
     for (const query of queries) {

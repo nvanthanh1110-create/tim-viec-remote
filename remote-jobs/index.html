@@ -10,18 +10,18 @@
 :root{
   --bg:#f6f7f9;--surface:#fff;--surface-2:#f0f2f5;--text:#15181d;--muted:#5d6673;--border:#e1e5ea;
   --accent:#2457d6;--accent-soft:#e7eefc;--ok:#167a4a;--ok-soft:#e3f4ea;--warn:#9a5b00;--warn-soft:#fdf1dc;
-  --c-seo:#2457d6;--c-ai:#7a3fd1;--c-translation:#0b7f86;--c-va:#b4461b;--c-teach:#a1307a;
+  --c-seo:#2457d6;--c-ai:#7a3fd1;--c-translation:#0b7f86;--c-va:#b4461b;--c-teach:#a1307a;--c-ecom:#9a6b00;--c-automation:#0a6fa3;--c-support:#3d7a1e;--c-review:#6b5b4b;
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#0f1216;--surface:#171b21;--surface-2:#1f242c;--text:#e8ebef;--muted:#9aa3ae;--border:#2a3039;
   --accent:#7ea4ff;--accent-soft:#1d2a47;--ok:#5fd19a;--ok-soft:#173327;--warn:#f0b45a;--warn-soft:#3a2c14;
-  --c-seo:#7ea4ff;--c-ai:#b893ff;--c-translation:#5fd0d6;--c-va:#ff9a70;--c-teach:#f28ccf;color-scheme:dark;
+  --c-seo:#7ea4ff;--c-ai:#b893ff;--c-translation:#5fd0d6;--c-va:#ff9a70;--c-teach:#f28ccf;--c-ecom:#f0c060;--c-automation:#6cc4f2;--c-support:#8fd16a;--c-review:#c9b8a6;color-scheme:dark;
 }}
 :root[data-theme="dark"]{
   --bg:#0f1216;--surface:#171b21;--surface-2:#1f242c;--text:#e8ebef;--muted:#9aa3ae;--border:#2a3039;
   --accent:#7ea4ff;--accent-soft:#1d2a47;--ok:#5fd19a;--ok-soft:#173327;--warn:#f0b45a;--warn-soft:#3a2c14;
-  --c-seo:#7ea4ff;--c-ai:#b893ff;--c-translation:#5fd0d6;--c-va:#ff9a70;--c-teach:#f28ccf;color-scheme:dark;
+  --c-seo:#7ea4ff;--c-ai:#b893ff;--c-translation:#5fd0d6;--c-va:#ff9a70;--c-teach:#f28ccf;--c-ecom:#f0c060;--c-automation:#6cc4f2;--c-support:#8fd16a;--c-review:#c9b8a6;color-scheme:dark;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -55,7 +55,7 @@ label.tg{display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer}
 .badges{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}
 .b{font-size:12px;padding:2px 8px;border-radius:6px;background:var(--surface-2);color:var(--muted)}
 .b.cat{color:#fff}
-.b.cat.seo{background:var(--c-seo)}.b.cat.ai{background:var(--c-ai)}.b.cat.translation{background:var(--c-translation)}.b.cat.va{background:var(--c-va)}.b.cat.teach{background:var(--c-teach)}
+.b.cat.seo{background:var(--c-seo)}.b.cat.ai{background:var(--c-ai)}.b.cat.translation{background:var(--c-translation)}.b.cat.va{background:var(--c-va)}.b.cat.teach{background:var(--c-teach)}.b.cat.ecom{background:var(--c-ecom)}.b.cat.automation{background:var(--c-automation)}.b.cat.support{background:var(--c-support)}.b.cat.review{background:var(--c-review)}
 :root[data-theme="dark"] .b.cat{color:#0f1216}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .b.cat{color:#0f1216}}
 .b.ok{background:var(--ok-soft);color:var(--ok)}.b.warn{background:var(--warn-soft);color:var(--warn)}
@@ -136,7 +136,7 @@ footer{color:var(--muted);font-size:13px;padding:30px 0 40px}
 <div class="wrap">
 <header>
   <h1>Việc Remote Cho Tôi</h1>
-  <p class="sub">SEO · AI training · Dịch thuật (MTPE) · Trợ lý ảo/Marketing · Dạy tiếng Anh. Việc quốc tế và trong nước, tự cập nhật 2 lần mỗi ngày.</p>
+  <p class="sub">SEO · AI training · Dịch thuật · Trợ lý ảo · Dạy tiếng Anh · Sàn TMĐT · Tự động hoá AI · CSKH chat · Kiểm duyệt/Phụ đề. Việc quốc tế và trong nước, tự cập nhật 2 lần mỗi ngày.</p>
 </header>
 
 <nav class="tabs" role="tablist">
@@ -253,6 +253,10 @@ const CATS = {
   translation: 'Dịch thuật',
   va: 'Trợ lý ảo / Marketing',
   teach: 'Dạy tiếng Anh / Trợ giảng',
+  ecom: 'SEO sàn TMĐT',
+  automation: 'Tự động hoá bằng AI',
+  support: 'CSKH chat/email',
+  review: 'Kiểm duyệt · Phụ đề · Tài liệu',
 };
 
 const PLATFORMS = [
@@ -287,6 +291,32 @@ const PLATFORMS = [
     { name: 'Antoree', url: 'https://antoree.com', pay: 'Theo giờ', desc: 'Nền tảng học tiếng Anh 1 kèm 1 của Việt Nam. Tuyển giáo viên người Việt cho học viên mới bắt đầu.' },
     { name: 'TopCV: gia sư tiếng Anh online', url: 'https://www.topcv.vn/tim-viec-lam-gia-su-tieng-anh-online', pay: 'VNĐ', desc: 'Việc dạy/trợ giảng online. Đọc kỹ tin vì nhiều nơi vẫn yêu cầu đến trung tâm.' },
     { name: 'Nhóm Facebook gia sư', url: 'https://www.facebook.com/search/groups/?q=gia%20s%C6%B0%20ti%E1%BA%BFng%20anh%20online', pay: 'Theo buổi', desc: 'Nhiều lớp gia sư tiếng Anh. Cẩn thận: KHÔNG đóng "phí nhận lớp" trước cho người lạ.' },
+  ]},
+  { group: 'SEO sàn thương mại điện tử', sub: 'Dùng kỹ năng SEO cho trang sản phẩm: nghiên cứu từ khoá trên sàn, viết tiêu đề + mô tả, tối ưu ảnh và đánh giá. Nên làm sẵn 2–3 listing mẫu (trước/sau) để làm portfolio.', items: [
+    { name: 'Upwork: Amazon / Shopify listing', url: 'https://www.upwork.com/nx/search/jobs/?q=amazon%20listing%20optimization', pay: '$10–30/giờ', desc: 'Nhiều khách Mỹ/Úc thuê viết và tối ưu listing. Đổi từ khoá thành "Shopify product description", "Etsy SEO".' },
+    { name: 'Fiverr: gói tối ưu listing', url: 'https://www.fiverr.com/categories/online-marketing/ecommerce-seo', pay: 'Tự đặt giá', desc: 'Đăng gói "Shopee/Lazada SEO listing (Vietnamese)" hoặc "Amazon listing" cho khách nước ngoài.' },
+    { name: 'OnlineJobs.ph: Amazon VA', url: 'https://www.onlinejobs.ph/jobseekers/jobsearch?jobkeyword=amazon', pay: 'Theo tháng', desc: 'Việc trợ lý Amazon (đăng sản phẩm, SEO listing). Phần lớn tuyển người Philippines, một số nhận Đông Nam Á.' },
+    { name: 'Nhóm chủ shop Shopee/TikTok Shop', url: 'https://www.facebook.com/search/groups/?q=c%E1%BB%99ng%20%C4%91%E1%BB%93ng%20ch%E1%BB%A7%20shop%20shopee', pay: 'VNĐ / dự án', desc: 'Chào dịch vụ tối ưu tên và mô tả sản phẩm cho shop Việt. Nhận cọc trước, làm thử 1–2 sản phẩm.' },
+  ]},
+  { group: 'Tự động hoá bằng AI', sub: 'Dựng quy trình AI cho doanh nghiệp nhỏ: tự viết bài SEO từ từ khoá, chatbot trả lời khách, tự đăng bài lên mạng xã hội. Học Make hoặc n8n (có bản miễn phí) trong 2–4 tuần là nhận được việc nhỏ.', items: [
+    { name: 'Upwork: n8n / Make / Zapier', url: 'https://www.upwork.com/nx/search/jobs/?q=n8n%20OR%20make.com%20OR%20zapier%20automation', pay: '$20–60/giờ', desc: 'Nhu cầu tăng mạnh. Chỉ giao tiếp bằng tin nhắn, giao file quy trình là xong.' },
+    { name: 'Upwork: AI chatbot', url: 'https://www.upwork.com/nx/search/jobs/?q=ai%20chatbot%20setup', pay: 'Theo dự án', desc: 'Dựng chatbot trả lời khách cho website/Facebook bằng công cụ không cần code.' },
+    { name: 'Contra', url: 'https://contra.com', pay: 'Không mất phí', desc: 'Đăng các quy trình đã làm làm portfolio. Khách tìm "AI automation" sẽ thấy bạn.' },
+    { name: 'Zapier Experts', url: 'https://zapier.com/experts', pay: 'Khách tự tìm', desc: 'Danh bạ chuyên gia Zapier. Cần có kinh nghiệm và dự án mẫu để được duyệt.' },
+  ]},
+  { group: 'CSKH qua chat / email', sub: 'Trả lời khách bằng chữ, không gọi điện. Hợp với bạn vì viết tốt hơn nói. Tìm chữ "non-voice", "chat support", "email support" trong tin. Trang đã gắn nhãn "Chỉ chat/email" cho các tin này.', items: [
+    { name: 'We Work Remotely: Customer Support', url: 'https://weworkremotely.com/categories/remote-customer-support-jobs', pay: '$', desc: 'Đã tự lấy về tab Việc mới. Lọc thêm tin nhận "Anywhere".' },
+    { name: 'Upwork: Vietnamese customer support', url: 'https://www.upwork.com/nx/search/jobs/?q=vietnamese%20customer%20support', pay: 'Theo giờ', desc: 'Công ty nước ngoài bán hàng cho người Việt cần người trả lời chat bằng tiếng Việt.' },
+    { name: 'Influx', url: 'https://www.influx.com/careers', pay: 'Theo giờ', desc: 'Công ty CSKH remote, tuyển nhiều nước. Có vị trí chỉ chat/email (kiểm tra điều kiện quốc gia).' },
+    { name: 'SupportNinja', url: 'https://www.supportninja.com/careers', pay: 'Theo tháng', desc: 'Thuê ngoài CSKH và vận hành. Có vị trí non-voice, tuỳ đợt tuyển.' },
+  ]},
+  { group: 'Kiểm duyệt · Phụ đề · Soạn tài liệu', sub: 'Việc làm theo task với tiếng Việt và tiếng Anh. Không cần nói, làm lúc rảnh được.', items: [
+    { name: 'TELUS Digital (kiểm duyệt)', url: 'https://www.telusdigital.com/careers', pay: 'Theo giờ', desc: 'Có dự án kiểm duyệt nội dung và đánh giá quảng cáo bằng tiếng Việt.' },
+    { name: 'Keywords Studios / Lionbridge Games', url: 'https://www.keywordsstudios.com/en/careers/', pay: 'Theo giờ', desc: 'Kiểm thử bản dịch tiếng Việt trong game và app (LQA). Một số vị trí làm remote.' },
+    { name: 'GoTranscript', url: 'https://gotranscript.com/transcription-jobs', pay: 'Theo phút audio', desc: 'Gõ lại băng ghi âm và làm phụ đề, có dự án tiếng nước ngoài. Thu nhập thấp nhưng làm lúc nào cũng được.' },
+    { name: 'Smartcat (phụ đề)', url: 'https://www.smartcat.com', pay: 'Theo dự án', desc: 'Agency đăng việc dịch và làm phụ đề video. Tạo hồ sơ Anh ↔ Việt.' },
+    { name: 'Teachers Pay Teachers', url: 'https://www.teacherspayteachers.com/Sell', pay: 'Bán tài liệu', desc: 'Tự bán worksheet và bài luyện tiếng Anh bạn soạn. Thu nhập thụ động, cần thời gian xây dựng.' },
+    { name: 'Upwork: ESL content writer', url: 'https://www.upwork.com/nx/search/jobs/?q=esl%20curriculum%20OR%20english%20worksheet', pay: 'Theo dự án', desc: 'Soạn bài học, đề luyện, worksheet cho trung tâm và nền tảng học tiếng Anh. Dùng AI để soạn nhanh hơn.' },
   ]},
   { group: 'Trong nước', sub: 'Tab Việc mới đã tự lấy tin làm từ xa trên VietnamWorks. Các trang dưới đây đã lọc sẵn việc remote/online để bạn xem thêm.', items: [
     { name: 'TopCV: việc remote', url: 'https://www.topcv.vn/tim-viec-lam-remote', pay: 'VNĐ', desc: 'TopCV chặn lấy tin tự động nên cần xem trực tiếp. Lọc thêm "Bán thời gian".' },
@@ -390,6 +420,7 @@ function card(j) {
       ${j.years ? `<span class="b">${j.years}+ năm KN</span>` : ''}
       ${j.speaking ? '<span class="b warn">Có thể cần nói/họp</span>' : ''}
       ${j.async ? '<span class="b ok">Không cần họp</span>' : ''}
+      ${j.textOnly ? '<span class="b ok">Chỉ chat/email, không gọi điện</span>' : ''}
     </div>
     ${salaryBox(j)}
     ${j.vn ? (j.requirements?.length ? `<details class="vi"><summary>Yêu cầu công việc</summary><ul>${j.requirements.map((r) => `<li>${esc(r)}</li>`).join('')}</ul></details>` : '') : viBlock(j)}
@@ -460,6 +491,13 @@ const KEYWORDS = [
   ['Research', /research|nghiên cứu/i], ['Customer support', /customer (support|service)|chăm sóc khách hàng/i],
   ['Project tools (Notion, Trello…)', /notion|trello|asana|jira|clickup/i], ['Attention to detail', /attention to detail|detail[- ]oriented|tỉ mỉ|cẩn thận/i],
   ['Time management', /time management|deadline|quản lý thời gian/i],
+  ['Shopee / Lazada / TikTok Shop', /shopee|lazada|tiktok shop/i], ['Amazon', /amazon/i], ['Shopify', /shopify/i], ['Etsy', /etsy/i],
+  ['Product listing', /product (listing|description)|listing optim|mô tả sản phẩm/i],
+  ['Zapier', /zapier/i], ['Make (Integromat)', /make\.com|integromat|\bmake scenario/i], ['n8n', /\bn8n\b/i], ['Airtable', /airtable/i],
+  ['Chatbot', /chatbot|chat bot/i], ['API / webhooks', /\bapi\b|webhook/i],
+  ['Zendesk / Freshdesk / Intercom', /zendesk|freshdesk|intercom|gorgias|help ?scout/i], ['Live chat / email support', /live chat|chat support|email support|ticket/i],
+  ['Content moderation', /moderat|trust (&|and) safety|kiểm duyệt/i], ['Subtitling / transcription', /subtitl|caption|transcri|phụ đề|gỡ băng/i],
+  ['Localization QA', /\blqa\b|localization (test|qa)|linguistic (qa|test)/i], ['Curriculum / ESL materials', /curriculum|worksheet|lesson material|instructional design|giáo trình/i],
 ];
 
 function jobText(j) { return `${j.title} ${j.tags.join(' ')} ${(j.requirements || []).join(' ')} ${j.excerpt || ''}`; }
