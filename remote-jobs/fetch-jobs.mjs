@@ -71,7 +71,9 @@ export const CATEGORIES = {
   ],
 };
 
-const EXCLUDE = [/\bsenior (software|backend|frontend|full[- ]?stack)/, /\bengineering manager\b/, /\bdevops\b/, /(test|qa) automation/, /automation (test|qa)/, /\bsdet\b/];
+// Tin cần một ngoại ngữ khác (không phải tiếng Anh/Việt) thì bạn không làm được.
+const OTHER_LANG = /\b(italian|german|french|spanish|portuguese|dutch|polish|japanese|korean|chinese|mandarin|cantonese|arabic|turkish|russian|ukrainian|thai|indonesian|bahasa|malay|tagalog|hindi|urdu|bengali|swedish|danish|norwegian|finnish|greek|hebrew|czech|slovak|hungarian|romanian|bulgarian|croatian|serbian|persian|farsi|georgian|armenian|swahili|anauk)\b|[\u0600-\u06ff\u0590-\u05ff\u0400-\u04ff\u3040-\u30ff\u4e00-\u9fff\uac00-\ud7af\u0e00-\u0e7f]/;
+const EXCLUDE = [OTHER_LANG, /\bsenior (software|backend|frontend|full[- ]?stack)/, /\bengineering manager\b/, /\bdevops\b/, /(test|qa) automation/, /automation (test|qa)/, /\bsdet\b/];
 
 export function classify(text) {
   const t = text.toLowerCase();
