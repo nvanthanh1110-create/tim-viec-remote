@@ -66,7 +66,16 @@ export function classify(text) {
 const OPEN_GEO = /(worldwide|anywhere|global|international|asia|apac|vietnam|viet nam|southeast|sea\b|remote$|^$|no restriction|all countries)/i;
 export const geoOpen = (loc) => OPEN_GEO.test((loc || '').trim());
 
-const ONLINE = /(online|từ xa|remote|tại nhà|work from home|\bwfh\b|làm việc tại nhà)/i;
+// Việc trong nước: chỉ giữ tin ghi rõ làm từ xa / online / tại nhà.
+const REMOTE_WORDS = /(remote|từ xa|work from home|\bwfh\b|tại nhà|làm online|dạy online|online)/i;
+const ONSITE_WORDS = /(hybrid|offline|tại văn phòng|tại trung tâm|tại cơ sở|làm việc tại công ty|đi làm tại|onsite|on-site)/i;
+// "marketing online", "bán hàng online"… là tên nghề, không có nghĩa làm từ xa.
+const notRemotePhrase = (t) => t.replace(/(marketing|bán hàng|kinh doanh|sales|quảng cáo|truyền thông|thương mại điện tử|digital) online/gi, '');
+export function isRemoteVn(title, desc) {
+  const t = notRemotePhrase(title), d = notRemotePhrase(desc);
+  if (REMOTE_WORDS.test(t) && !/offline|hybrid/i.test(t)) return true;
+  return REMOTE_WORDS.test(d) && !ONSITE_WORDS.test(`${t} ${d}`);
+}
 const VI_TEXT = /[ăâđêôơưạảấầẩẫậắằẳẵặẹẻẽếềểễệịỉĩọỏốồổỗộớờởỡợụủứừửữựỳỷỹý]/i;
 
 const FLEX = /(freelance|contract|part[- ]?time|hourly|temporary|flexible|gig|per task|bán thời gian|thời vụ|cộng tác viên|\bctv\b|theo buổi)/i;
@@ -383,7 +392,7 @@ const SOURCES = {
 
   // VietnamWorks: API tìm kiếm mà chính trang web dùng (không chính thức, có thể đổi).
   async VietnamWorks() {
-    const queries = ['gia sư tiếng anh', 'trợ giảng tiếng anh', 'giáo viên tiếng anh online', 'tiếng anh part time', 'biên dịch tiếng anh', 'seo remote', 'content seo', 'cộng tác viên viết bài'];
+    const queries = ['remote', 'làm việc từ xa', 'làm việc tại nhà', 'online part time', 'gia sư tiếng anh online', 'giáo viên tiếng anh online', 'trợ giảng online', 'tiếng anh remote', 'biên dịch online', 'seo remote', 'content remote', 'cộng tác viên online', 'freelance'];
     const out = [];
     let ok = 0, lastErr;
     for (const query of queries) {
@@ -419,34 +428,6 @@ const SOURCES = {
     return out;
   },
 
-  // TopCV: đọc trang kết quả tìm kiếm (không có API công khai).
-  async TopCV() {
-    const slugs = ['gia-su-tieng-anh', 'tro-giang-tieng-anh', 'giao-vien-tieng-anh-online', 'tieng-anh-part-time', 'seo-remote', 'cong-tac-vien-viet-bai'];
-    const out = [];
-    let ok = 0, lastErr;
-    for (const slug of slugs) {
-      let html;
-      try { html = await get(`https://www.topcv.vn/tim-viec-lam-${slug}`, 'text'); ok++; }
-      catch (e) { lastErr = e; continue; }
-      const blocks = html.split(/class="job-item-search-result/).slice(1);
-      for (const b of blocks) {
-        const link = b.match(/href="(https:\/\/www\.topcv\.vn\/(?:viec-lam|brand)\/[^"?]+)/);
-        const title = b.match(/<h3[^>]*>[\s\S]*?<span[^>]*title="([^"]+)"/) || b.match(/<h3[^>]*>\s*<a[^>]*>\s*(?:<span[^>]*>)?([^<]+)/);
-        if (!link || !title) continue;
-        const company = b.match(/class="company[^"]*"[\s\S]*?<span[^>]*class="company-name"[^>]*>([^<]+)/) || b.match(/class="company[^"]*"[^>]*>\s*(?:<[^>]+>\s*)*([^<]+)/);
-        const salary = b.match(/class="title-salary"[^>]*>([^<]+)/);
-        const city = b.match(/class="city-text"[^>]*>([^<]+)/);
-        out.push({
-          title: decode(title[1]).trim(), company: company ? decode(company[1]).trim() : '',
-          url: link[1], date: null, location: city ? decode(city[1]).trim() : 'Việt Nam', type: '',
-          salaryText: salary ? decode(salary[1]).trim() : '', tags: [], description: '', vn: true,
-        });
-      }
-    }
-    if (!ok) throw lastErr;
-    return out;
-  },
-
   async 'Working Nomads'() {
     const d = await get('https://www.workingnomads.com/api/exposed_jobs/');
     return d.map((j) => ({
@@ -478,7 +459,7 @@ async function main() {
   for (const [name, fn] of Object.entries(SOURCES)) {
     try {
       const raw = await fn();
-      let kept = 0;
+      let kept = 0, skippedOnsite = 0;
       for (const j of raw) {
         if (!j.title || !j.url) continue;
         const ts = Date.parse(j.date);
@@ -486,9 +467,11 @@ async function main() {
         const tags = (j.tags || []).filter(Boolean).map(String);
         const cats = classify(`${j.title} ${tags.join(' ')}`);
         if (!cats.length) continue;
-        const key = `${j.title}|${j.company}`.toLowerCase().replace(/[^a-z0-9|]/g, '');
+        // Giữ cả chữ có dấu trong khoá, tránh 2 tin tiếng Việt khác nhau bị coi là trùng.
+        const key = `${j.title}|${j.company}`.toLowerCase().replace(/[^\p{L}\p{N}|]/gu, '');
         if (seen.has(key)) continue;
         const desc = strip(j.description || '');
+        if (j.vn && !isRemoteVn(j.title, desc)) { skippedOnsite++; continue; }
         const text = `${j.title} ${tags.join(' ')} ${desc}`;
         const salary =
           buildSalary(j.salary, rates) ||
@@ -504,7 +487,6 @@ async function main() {
           location: strip(j.location || '') || 'Không ghi',
           geoOpen: j.vn ? true : geoOpen(j.location),
           vn: !!j.vn,
-          online: j.vn ? ONLINE.test(`${j.title} ${j.location} ${desc}`) : true,
           type: strip(j.type || '').replace(/_/g, ' '),
           flexible: FLEX.test(`${j.type} ${j.title} ${j.salaryText || ''}`),
           salaryText: strip(String(j.salaryText || '')),
@@ -519,7 +501,7 @@ async function main() {
         kept++;
       }
       sources[name] = { ok: true, fetched: raw.length, kept };
-      console.log(`✓ ${name}: ${raw.length} tin, giữ ${kept}`);
+      console.log(`✓ ${name}: ${raw.length} tin, giữ ${kept}${skippedOnsite ? `, bỏ ${skippedOnsite} tin không làm từ xa` : ''}`);
     } catch (e) {
       sources[name] = { ok: false, error: String(e.message || e) };
       console.warn(`✗ ${name}: ${e.message || e}`);
